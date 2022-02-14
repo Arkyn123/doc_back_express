@@ -1,0 +1,42 @@
+{
+    "development": {
+        "database": {
+            "username": "postgres",
+            "password": "root",
+            "database": "documents",
+            "host": "10.11.13.201",
+            "port": 5432,
+            "dialect": "postgres",
+            "logging": false
+        },
+        "server": {
+            "protocol": "http",
+            "host": "10.11.13.201",
+            "port": 8082,
+            "errorRestartIntervalInMinutes": 1,
+            "resetDatabaseOnRestart": false,
+            "requestMaxSize": "100mb",
+            "urlPrefix": "/api"
+        }
+    },
+    "production": {
+        "database": {
+            "username": "postgres",
+            "password": null,
+            "database": "documents",
+            "host": "localhost",
+            "port": 5432,
+            "dialect": "postgres",
+            "logging": false
+        },
+        "server": {
+            "protocol": "http",
+            "host": "localhost",
+            "port": 8081,
+            "errorRestartIntervalInMinutes": 1,
+            "resetDatabaseOnRestart": false,
+            "requestMaxSize": "100mb",
+            "urlPrefix": "/api"
+        }
+    }
+}
