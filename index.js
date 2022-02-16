@@ -28,6 +28,10 @@ app.use(checkConnectionWithDB);
 // Подключение роутеров
 const documentRouter = require("./routes/document.router");
 app.use(`${config.server.urlPrefix}/document`, documentRouter);
+const statusRouter = require("./routes/status.router");
+app.use(`${config.server.urlPrefix}/status`, statusRouter);
+const routeCoordinationRouter = require("./routes/routeCoordination.router");
+app.use(`${config.server.urlPrefix}/routeCoordination`, routeCoordinationRouter);
 
 // Запуск сервера
 const startServer = async () => {

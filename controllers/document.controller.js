@@ -1,5 +1,5 @@
 const db = require("../models");
-const { Document, Sequelize } = db;
+const { Document, RouteCoordination, Sequelize } = db;
 const { ValidationError } = Sequelize;
 const errors = require("../utils/errors");
 
@@ -17,7 +17,14 @@ class DocumentController {
 
   async addNewDocument(req, res) {
     try {
-      const result = await Document.create({...req.body});
+      const result = await Document.create({...req.body.body.body});
+      const rcs = req.body.body.routeCoordinations.map(rc => ({
+        ...rc,
+        documentId: result.dataValues.id,
+        statusId: 1
+      }))
+      const rcRes = await RouteCoordination.bulkCreate(rcs);
+      console.warn(rcRes)
       return res.status(errors.success.code).json(result.dataValues);
     } catch (e) {
       console.log(e)

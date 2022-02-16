@@ -11,63 +11,13 @@ module.exports = (sequelize, DataTypes) => {
         body: {
           type: DataTypes.JSON,
           defaultValue: {}
-        }
-        // surname: {
-        //   type: DataTypes.STRING(128),
-        //   defaultValue: "",
-        // },
-        // name: {
-        //   type: DataTypes.STRING(128),
-        //   defaultValue: "",
-        // },
-        // middlename: {
-        //   type: DataTypes.STRING(128),
-        //   defaultValue: "",
-        // },
-        // personalNumber: {
-        //   type: DataTypes.INTEGER,
-        //   defaultValue: null,
-        // },
-        // job: {
-        //   type: DataTypes.STRING(128),
-        //   defaultValue: "",
-        // },
-        // position: {
-        //   type: DataTypes.STRING(128),
-        //   defaultValue: null,
-        // },
-        // dateStart: {
-        //   type: DataTypes.STRING(128),
-        //   defaultValue: "",
-        // },
-        // dateEnd: {
-        //   type: DataTypes.STRING(128),
-        //   defaultValue: "",
-        // },
-        // dateApplication: {
-        //   type: DataTypes.STRING(128),
-        //   defaultValue: "",
-        // },
-        // positionLeader: {
-        //   type: DataTypes.STRING(128),
-        //   defaultValue: null,
-        // },
-        // fullnameLeader: {
-        //   type: DataTypes.STRING(128),
-        //   defaultValue: "",
-        // },
-        // surnameLeader: {
-        //   type: DataTypes.STRING(128),
-        //   defaultValue: "",
-        // },
-        // nameLeader: {
-        //   type: DataTypes.STRING(128),
-        //   defaultValue: "",
-        // },
-        // middlenameLeader: {
-        //   type: DataTypes.STRING(128),
-        //   defaultValue: "",
-        // },
+        },
+        //статус,
+        //цех, 
+        //регистрационный номер,
+        //дата регистрации
+
+       //маршрут согласования отд. таблица (id докум, )
       },
       {
         // hooks: {
@@ -87,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     );
     Document.associate = function (models) {
-      //   Specialist.belongsTo(models.Section, { as: "section" });
+      Document.hasMany(models.RouteCoordination, { onDelete: 'CASCADE', foreignKey: 'documentId', as: 'routeCoordinations' })
     };
     return Document;
   };
