@@ -2,11 +2,16 @@ const db = require("../models");
 const { Document, RouteCoordination, Sequelize } = db;
 const { ValidationError } = Sequelize;
 const errors = require("../utils/errors");
+const {
+  RouteCoordinationAssociation,
+} = require("../filteringAndMiddleware/associations");
 
 class DocumentController {
   async getAllDocument(req, res) {
     try {
-      const documents = await Document.findAll();
+      const documents = await Document.findAll({
+        include: RouteCoordinationAssociation,
+      });
       return res
         .status(errors.success.code)
         .json(documents);
