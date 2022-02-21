@@ -9,12 +9,18 @@ const {
 class DocumentController {
   async getAllDocument(req, res) {
     try {
+      const filter = { ...req.filter };
+      console.log(filter);
+      if (!filter.where) {
+        filter.where = {};
+      } else {
+        filter.where = { ...filter.where };
+      }
       const documents = await Document.findAll({
+        ...filter,
         include: RouteCoordinationAssociation,
       });
-      return res
-        .status(errors.success.code)
-        .json(documents);
+      return res.status(errors.success.code).json(documents);
     } catch (e) {
       return res.sendStatus(errors.internalServerError.code);
     }
@@ -22,17 +28,16 @@ class DocumentController {
 
   async addNewDocument(req, res) {
     try {
-      const result = await Document.create({...req.body.body.body});
-      const rcs = req.body.body.routeCoordinations.map(rc => ({
+      const result = await Document.create({ ...req.body.body });
+      const rcs = req.body.body.routeCoordinations.map((rc) => ({
         ...rc,
         documentId: result.dataValues.id,
-        statusId: 1
-      }))
+        statusId: 1,
+      }));
       const rcRes = await RouteCoordination.bulkCreate(rcs);
-      console.warn(rcRes)
       return res.status(errors.success.code).json(result.dataValues);
     } catch (e) {
-      console.log(e)
+      console.log(e);
       if (e instanceof ValidationError) {
         return res.sendStatus(errors.badRequest.code);
       }
@@ -40,6 +45,5 @@ class DocumentController {
     }
   }
 }
-
 
 module.exports = new DocumentController();

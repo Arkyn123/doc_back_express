@@ -2,7 +2,6 @@ const db = require('../models')
 const { Status, Sequelize } = db
 const { ValidationError } = Sequelize
 const errors = require('../utils/errors')
-const { StatusAssociation } = require('../filteringAndMiddleware/associations')
 const log = require('../loggers/eventLog')
 
 class StatusController {
@@ -37,8 +36,7 @@ class StatusController {
 
     async addNewStatus(req, res) {
         try {
-            const result = await Status.create({ ...req.body }, { include: StatusAssociation })
-            log(req, `status [id:${result.dataValues.id}/${result.dataValues.value}/${result.dataValues.description}] created`, true)
+            const result = await Status.create({ ...req.body })
             return res
                 .status(errors.success.code)
                 .json(result.dataValues)
