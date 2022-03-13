@@ -1,5 +1,7 @@
 const db = require("../models");
+const dbMSSQL = require("../modelsMSSQL");
 const { Document, RouteCoordination, Sequelize } = db;
+const { DIC_OFFICE, DIC_OFFICE_CORRESPONDENCE } = dbMSSQL;
 const { ValidationError } = Sequelize;
 const errors = require("../utils/errors");
 const {
@@ -29,12 +31,12 @@ class DocumentController {
   async addNewDocument(req, res) {
     try {
       const result = await Document.create({ ...req.body.body });
-      const rcs = req.body.body.routeCoordinations.map((rc) => ({
-        ...rc,
-        documentId: result.dataValues.id,
-        statusId: 1,
-      }));
-      const rcRes = await RouteCoordination.bulkCreate(rcs);
+      // const rcs = req.body.body.routeCoordinations.map((rc) => ({
+      //   ...rc,
+      //   documentId: result.dataValues.id,
+      //   statusId: 1,
+      // }));
+      // const rcRes = await RouteCoordination.bulkCreate(rcs);
       return res.status(errors.success.code).json(result.dataValues);
     } catch (e) {
       console.log(e);

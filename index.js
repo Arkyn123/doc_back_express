@@ -14,9 +14,7 @@ global.serverPath = __dirname;
 global.connected = false;
 
 // Промежуточная функция проверки подключения к базе данных
-const {
-  checkConnectionWithDB,
-} = require("./middleware/middleware");
+const { checkConnectionWithDB } = require("./middleware/middleware");
 
 app.use(express.json({ limit: config.server.requestMaxSize }));
 app.use(
@@ -28,19 +26,27 @@ app.use(checkConnectionWithDB);
 // Подключение роутеров
 const documentRouter = require("./routes/document.router");
 app.use(`${config.server.urlPrefix}/document`, documentRouter);
-const statusRouter = require("./routes/status.router");
-app.use(`${config.server.urlPrefix}/status`, statusRouter);
-const routeCoordinationRouter = require("./routes/routeCoordination.router");
-app.use(`${config.server.urlPrefix}/routeCoordination`, routeCoordinationRouter);
+const documentStatusRouter = require("./routes/documentStatus.router");
+app.use(`${config.server.urlPrefix}/documentStatus`, documentStatusRouter);
 
+const dicOfficeRouter = require("./routes/dicOffice.router");
+app.use(`${config.server.urlPrefix}/dicOffice`, dicOfficeRouter);
+const dicOfficeRouterCorrespondence = require("./routes/dicOfficeCorrespondence.router");
+app.use(`${config.server.urlPrefix}/dicOfficeCorrespondence`, dicOfficeRouterCorrespondence);
+const documentTypeRouter = require("./routes/documentType.router");
+app.use(`${config.server.urlPrefix}/documentType`, documentTypeRouter);
+const documentRouteRouter = require("./routes/documentRoute.router");
+app.use(`${config.server.urlPrefix}/documentRoute`, documentRouteRouter);
 // Запуск сервера
 const startServer = async () => {
   const db = require("./models");
+  const dbMSSQL = require("./modelsMSSQL");
   const fs = require("fs");
   const path = require("path");
   try {
     // Синхронизация моделей с базой данных, флаг resetDatabaseOnRestart отвечает за принудительную очистку базы данных при перезапуске сервера
     await db.sequelize.sync({ force: config.server.resetDatabaseOnRestart });
+    await dbMSSQL.sequelizeMSSQL.sync({ force: false });
     server.listen(config.server.port, config.server.host, async () => {
       console.log(`Mode: ${env}`);
       console.log(

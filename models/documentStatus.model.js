@@ -1,13 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
-    const Status = sequelize.define("Status", {
+    const Status = sequelize.define("DocumentStatus", {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
-            allowNull: false
-        },
-        value: {
-            type: DataTypes.STRING(32),
             allowNull: false
         },
         description: {

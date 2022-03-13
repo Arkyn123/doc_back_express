@@ -17,6 +17,7 @@
     "nodemon": "^2.0.15",
     "pg": "^8.7.1",
     "sequelize": "^6.12.5",
-    "sequelize-search-builder": "^0.11.0"
+    "sequelize-search-builder": "^0.11.0",
+    "tedious": "^14.3.0"
   }
 }

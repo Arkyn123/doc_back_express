@@ -1,7 +1,7 @@
 const Router = require('express').Router
 const router = new Router()
 
-const controller = require('../controllers/status.controller')
+const controller = require('../controllers/documentStatus.controller')
 
 // const setFilterFromClient = require('../filteringAndMiddleware/sequelizeFiltering')
 // const { permissions } = require('../filteringAndMiddleware/middleware')

@@ -1,13 +1,13 @@
 const db = require('../models')
-const { Status, Sequelize } = db
+const { DocumentStatus, Sequelize } = db
 const { ValidationError } = Sequelize
 const errors = require('../utils/errors')
 const log = require('../loggers/eventLog')
 
-class StatusController {
+class DocumentStatusController {
     async getAllStatusesWithFiltering(req, res) {
         try {
-            const statuses = await Status.findAll({ ...req.filter, include: StatusAssociation })
+            const statuses = await DocumentStatus.findAll({ ...req.filter, include: StatusAssociation })
             return res
                 .status(errors.success.code)
                 .json(statuses)
@@ -19,7 +19,7 @@ class StatusController {
 
     async getStatusByStatusId(req, res) {
         try {
-            const status = await Status.findByPk(req.params.statusId, { include: StatusAssociation })
+            const status = await DocumentStatus.findByPk(req.params.statusId, { include: StatusAssociation })
             if (!status) {
                 return res
                     .sendStatus(errors.notFound.code)
@@ -36,7 +36,7 @@ class StatusController {
 
     async addNewStatus(req, res) {
         try {
-            const result = await Status.create({ ...req.body })
+            const result = await DocumentStatus.create({ ...req.body })
             return res
                 .status(errors.success.code)
                 .json(result.dataValues)
@@ -52,7 +52,7 @@ class StatusController {
 
     async updateStatusByStatusId(req, res) {
         try {
-            const status = await Status.findByPk(req.params.statusId, { include: StatusAssociation })
+            const status = await DocumentStatus.findByPk(req.params.statusId, { include: StatusAssociation })
             if (!status) {
                 return res
                     .sendStatus(errors.notFound.code)
@@ -73,7 +73,7 @@ class StatusController {
 
     async deleteStatusByStatusId(req, res) {
         try {
-            const status = await Status.findByPk(req.params.statusId)
+            const status = await DocumentStatus.findByPk(req.params.statusId)
             if (!status) {
                 return res
                     .sendStatus(errors.notFound.code)
@@ -88,4 +88,4 @@ class StatusController {
     }
 }
 
-module.exports = new StatusController()
+module.exports = new DocumentStatusController()

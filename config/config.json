@@ -9,6 +9,15 @@
             "dialect": "postgres",
             "logging": false
         },
+        "databaseMSSQL": {
+            "username": "webuser",
+            "password": "G745JRQ8!",
+            "database": "ELR_Orders_test",
+            "host": "10.11.62.70",
+            "dialect": "mssql",
+            "port": 1433,
+            "logging": false
+        },      
         "server": {
             "protocol": "http",
             "host": "10.11.13.201",
@@ -29,6 +38,15 @@
             "dialect": "postgres",
             "logging": false
         },
+        "databaseMSSQL": {
+            "username": "webuser",
+            "password": "G745JRQ8!",
+            "database": "ELR_Orders_test",
+            "host": "10.11.62.70",
+            "dialect": "mssql",
+            "port": 1433,
+            "logging": false
+        },   
         "server": {
             "protocol": "http",
             "host": "localhost",

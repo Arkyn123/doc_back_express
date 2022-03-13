@@ -12,12 +12,15 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.JSON,
           defaultValue: {}
         },
+        message: {
+          type: DataTypes.STRING(256),
+          allowNull: false,
+        }
         //статус,
         //цех, 
         //регистрационный номер,
         //дата регистрации
 
-       //маршрут согласования отд. таблица (id докум, )
       },
       {
         // hooks: {
@@ -37,7 +40,10 @@ module.exports = (sequelize, DataTypes) => {
       }
     );
     Document.associate = function (models) {
-      Document.hasMany(models.RouteCoordination, { onDelete: 'CASCADE', foreignKey: 'documentId', as: 'routeCoordinations' })
+      // Document.hasMany(models.RouteCoordination, { onDelete: 'CASCADE', foreignKey: 'documentId', as: 'routeCoordinations' })
+      Document.belongsTo(models.DocumentStatus, { as: "status" })
+      Document.belongsTo(models.DocumentRoute, { as: "order" })
+      Document.belongsTo(models.DocumentType, { as: "documentType" });
     };
     return Document;
   };
