@@ -5,34 +5,34 @@ const errors = require('../utils/errors')
 const log = require('../loggers/eventLog')
 
 class DocumentStatusController {
-    async getAllStatusesWithFiltering(req, res) {
-        try {
-            const statuses = await DocumentStatus.findAll({ ...req.filter, include: StatusAssociation })
-            return res
-                .status(errors.success.code)
-                .json(statuses)
-        } catch (e) {
-            return res
-                .sendStatus(errors.internalServerError.code)
-        }
-    }
+    // async getAllStatusesWithFiltering(req, res) {
+    //     try {
+    //         const statuses = await DocumentStatus.findAll({ ...req.filter, include: StatusAssociation })
+    //         return res
+    //             .status(errors.success.code)
+    //             .json(statuses)
+    //     } catch (e) {
+    //         return res
+    //             .sendStatus(errors.internalServerError.code)
+    //     }
+    // }
 
-    async getStatusByStatusId(req, res) {
-        try {
-            const status = await DocumentStatus.findByPk(req.params.statusId, { include: StatusAssociation })
-            if (!status) {
-                return res
-                    .sendStatus(errors.notFound.code)
-            }
+    // async getStatusByStatusId(req, res) {
+    //     try {
+    //         const status = await DocumentStatus.findByPk(req.params.statusId, { include: StatusAssociation })
+    //         if (!status) {
+    //             return res
+    //                 .sendStatus(errors.notFound.code)
+    //         }
 
-            return res
-                .status(errors.success.code)
-                .json(status)
-        } catch (e) {
-            return res
-                .status(errors.internalServerError.code)
-        }
-    }
+    //         return res
+    //             .status(errors.success.code)
+    //             .json(status)
+    //     } catch (e) {
+    //         return res
+    //             .status(errors.internalServerError.code)
+    //     }
+    // }
 
     async addNewStatus(req, res) {
         try {
@@ -50,42 +50,42 @@ class DocumentStatusController {
         }
     }
 
-    async updateStatusByStatusId(req, res) {
-        try {
-            const status = await DocumentStatus.findByPk(req.params.statusId, { include: StatusAssociation })
-            if (!status) {
-                return res
-                    .sendStatus(errors.notFound.code)
-            }
-            await status.update({ ...req.body })
-            return res
-                .status(errors.success.code)
-                .json(status)
-        } catch (e) {
-            if (e instanceof ValidationError) {
-                return res
-                    .sendStatus(errors.badRequest.code)
-            }
-            return res
-                .sendStatus(errors.internalServerError.code)
-        }
-    }
+    // async updateStatusByStatusId(req, res) {
+    //     try {
+    //         const status = await DocumentStatus.findByPk(req.params.statusId, { include: StatusAssociation })
+    //         if (!status) {
+    //             return res
+    //                 .sendStatus(errors.notFound.code)
+    //         }
+    //         await status.update({ ...req.body })
+    //         return res
+    //             .status(errors.success.code)
+    //             .json(status)
+    //     } catch (e) {
+    //         if (e instanceof ValidationError) {
+    //             return res
+    //                 .sendStatus(errors.badRequest.code)
+    //         }
+    //         return res
+    //             .sendStatus(errors.internalServerError.code)
+    //     }
+    // }
 
-    async deleteStatusByStatusId(req, res) {
-        try {
-            const status = await DocumentStatus.findByPk(req.params.statusId)
-            if (!status) {
-                return res
-                    .sendStatus(errors.notFound.code)
-            }
-            await status.destroy()
-            return res
-                .sendStatus(errors.success.code)
-        } catch (e) {
-            return res
-                .sendStatus(errors.internalServerError.code)
-        }
-    }
+    // async deleteStatusByStatusId(req, res) {
+    //     try {
+    //         const status = await DocumentStatus.findByPk(req.params.statusId)
+    //         if (!status) {
+    //             return res
+    //                 .sendStatus(errors.notFound.code)
+    //         }
+    //         await status.destroy()
+    //         return res
+    //             .sendStatus(errors.success.code)
+    //     } catch (e) {
+    //         return res
+    //             .sendStatus(errors.internalServerError.code)
+    //     }
+    // }
 }
 
 module.exports = new DocumentStatusController()

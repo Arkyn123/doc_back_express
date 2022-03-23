@@ -12,7 +12,7 @@
         "databaseMSSQL": {
             "username": "webuser",
             "password": "G745JRQ8!",
-            "database": "ELR_Orders_test",
+            "database": "ELR_Orders",
             "host": "10.11.62.70",
             "dialect": "mssql",
             "port": 1433,
@@ -26,6 +26,10 @@
             "resetDatabaseOnRestart": false,
             "requestMaxSize": "100mb",
             "urlPrefix": "/api"
+        },
+        "services": {
+            "gatewayDecode": "http://10.11.62.74:3000/decode",
+            "users": "http://10.11.62.74:3000/service/users/graphql"
         }
     },
     "production": {
@@ -41,7 +45,7 @@
         "databaseMSSQL": {
             "username": "webuser",
             "password": "G745JRQ8!",
-            "database": "ELR_Orders_test",
+            "database": "ELR_Orders",
             "host": "10.11.62.70",
             "dialect": "mssql",
             "port": 1433,
@@ -55,6 +59,10 @@
             "resetDatabaseOnRestart": false,
             "requestMaxSize": "100mb",
             "urlPrefix": "/api"
+        },
+        "services": {
+            "gatewayDecode": "http://10.11.62.74:3000/decode",
+            "users": "http://10.11.62.74:3000/service/users/graphql"
         }
     }
 }

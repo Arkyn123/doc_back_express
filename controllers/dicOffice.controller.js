@@ -10,7 +10,6 @@ class DicOfficeController {
   async getAll(req, res) {
     try {
       const filter = { ...req.filter };
-      console.log(filter);
       if (!filter.where) {
         filter.where = {};
       } else {

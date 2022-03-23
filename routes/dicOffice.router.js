@@ -3,6 +3,7 @@ const router = new Router();
 const setFilterFromClient = require("../filteringAndMiddleware/sequelizeFiltering");
 
 const controller = require("../controllers/dicOffice.controller");
+const { permissions } = require('../filteringAndMiddleware/middleware')
 
 router.get("/", setFilterFromClient, controller.getAll);
 router.post("/add", controller.addInDictionary);

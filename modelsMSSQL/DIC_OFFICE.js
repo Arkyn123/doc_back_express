@@ -57,7 +57,7 @@ module.exports = function (sequelize, DataTypes) {
     }
   );
   DIC_OFFICE.associate = function (models) {
-    DIC_OFFICE.hasOne(models.DIC_OFFICE_CORRESPONDENCE, {
+    DIC_OFFICE.hasMany(models.DIC_OFFICE_CORRESPONDENCE, {
       onDelete: "CASCADE",
       foreignKey: "OFFICE_ID",
       as: "CORRESPONDENCE".toLowerCase(),

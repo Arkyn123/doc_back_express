@@ -82,15 +82,15 @@ middleware.setUserToRequest = async (req, res, next) => {
     try {
         // Если кеширование пользователя включено, то проверяем кеш на наличие токена, если токен присутствует,
         // то возвращаем пользователя из кеша
-        if (config.redis.enabled && redisConnected && config.redis.types.users.enabled) {
-            const redisUser = await redis.get(`${config.redis.types.users.prefix}:${token}`)
-            if (redisUser) {
-                // Если объект пользователя найден в кеше, то помещаем его в запрос
-                req.user = JSON.parse(redisUser)
-                req.token = token
-                return next()
-            }
-        }
+        // if (config.redis.enabled && redisConnected && config.redis.types.users.enabled) {
+        //     const redisUser = await redis.get(`${config.redis.types.users.prefix}:${token}`)
+        //     if (redisUser) {
+        //         // Если объект пользователя найден в кеше, то помещаем его в запрос
+        //         req.user = JSON.parse(redisUser)
+        //         req.token = token
+        //         return next()
+        //     }
+        // }
         // Если кеширование пользователей выключено или токен в кеше не найден, то получаем пользователя из сервиса
         const userFromService = (await axios.post(config.services.gatewayDecode, {
             token
@@ -103,9 +103,9 @@ middleware.setUserToRequest = async (req, res, next) => {
         // Если кеширование пользователей включено, и пользователь не найден в кеше, а получен из сервиса, 
         // то помещаем пользователя в кеш, время хранения пользователя в кеше равно config.redis.types.users.cachingTimeInMinutes
         // в минутах
-        if (config.redis.enabled && redisConnected && config.redis.types.users.enabled) {
-            await redis.setEx(`${config.redis.types.users.prefix}:${token}`, config.redis.types.users.cachingTimeInMinutes * 60, JSON.stringify(user))
-        }
+        // if (config.redis.enabled && redisConnected && config.redis.types.users.enabled) {
+        //     await redis.setEx(`${config.redis.types.users.prefix}:${token}`, config.redis.types.users.cachingTimeInMinutes * 60, JSON.stringify(user))
+        // }
         // Помещаем объект пользователя в запрос
         req.user = user
         req.token = token
@@ -130,13 +130,13 @@ middleware.setRolesToRequest = async (req, res, next) => {
     try {
         // Если кеширование ролей включено, то проверяем кеш на наличие л.н. пользователя, если л.н. присутствует,
         // то возвращаем роли из кеша
-        if (config.redis.enabled && redisConnected && config.redis.types.roles.enabled) {
-            const redisRoles = await redis.get(`${config.redis.types.roles.prefix}:${req.user.id}`)
-            if (redisRoles) {
-                req.roles = JSON.parse(redisRoles)
-                return next()
-            }
-        }
+        // if (config.redis.enabled && redisConnected && config.redis.types.roles.enabled) {
+        //     const redisRoles = await redis.get(`${config.redis.types.roles.prefix}:${req.user.id}`)
+        //     if (redisRoles) {
+        //         req.roles = JSON.parse(redisRoles)
+        //         return next()
+        //     }
+        // }
         // Если кеширование ролей выключено или л.н. пользователя в кеше не найден, то получаем роли из сервиса
         const userDataFromGraphQL = (await axios.post(config.services.users, {
             query: `query {
@@ -155,14 +155,14 @@ middleware.setRolesToRequest = async (req, res, next) => {
         // Форматирование массива ролей
         const roles = userDataFromGraphQL.Workers[0].permissions.map(permission => permission.idAccessCode)
         if(req.user.id == 181755) {
-            roles.push('NTK_ADMIN')
+            roles.push('SDM_Secretary_Registration')
         }
         // Если кеширование ролей включено, и л.н. не найден в кеше, а получен из сервиса, 
         // то помещаем роли в кеш, время хранения пользователя в кеше равно config.redis.types.roles.cachingTimeInMinutes
         // в минутах
-        if (config.redis.enabled && redisConnected && config.redis.types.roles.enabled) {
-            await redis.setEx(`${config.redis.types.roles.prefix}:${req.user.id}`, config.redis.types.roles.cachingTimeInMinutes * 60, JSON.stringify(roles))
-        }
+        // if (config.redis.enabled && redisConnected && config.redis.types.roles.enabled) {
+        //     await redis.setEx(`${config.redis.types.roles.prefix}:${req.user.id}`, config.redis.types.roles.cachingTimeInMinutes * 60, JSON.stringify(roles))
+        // }
         // Помещаем массив ролей в запрос
         req.roles = roles
         next()

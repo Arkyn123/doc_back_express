@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
         message: {
           type: DataTypes.STRING(256),
           allowNull: false,
+        },
+        order: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
         }
         //статус,
         //цех, 
@@ -23,26 +27,12 @@ module.exports = (sequelize, DataTypes) => {
 
       },
       {
-        // hooks: {
-        //   beforeValidate: (specialist, options) => {
-        //     specialist.fullname = specialist.middlename
-        //       ? `${specialist.surname} ${specialist.name} ${specialist.middlename}`
-        //       : `${specialist.surname} ${specialist.name}`;
-        //   },
-        // },
-        // uniqueKeys: {
-        //   uniqueLike: {
-        //     fields: ["personalNumber", "sectionId"],
-        //   },
-        // },
-        // updatedAt: false,
         freezeTableName: true,
       }
     );
     Document.associate = function (models) {
-      // Document.hasMany(models.RouteCoordination, { onDelete: 'CASCADE', foreignKey: 'documentId', as: 'routeCoordinations' })
       Document.belongsTo(models.DocumentStatus, { as: "status" })
-      Document.belongsTo(models.DocumentRoute, { as: "order" })
+      // Document.belongsTo(models.DocumentRoute, { as: "route" })
       Document.belongsTo(models.DocumentType, { as: "documentType" });
     };
     return Document;

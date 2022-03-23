@@ -4,7 +4,7 @@ const setFilterFromClient = require('../filteringAndMiddleware/sequelizeFilterin
 
 const controller = require("../controllers/dicOfficeCorrespondence.controller");
 
-router.get("/", controller.getAll);
+router.get("/", setFilterFromClient, controller.getAll);
 router.post("/add", controller.addInDictionary);
 router.put(`/update/:id`, controller.saveInDictionary)
 router.put(`/delete/:id`, controller.delInDictionary)

@@ -9,7 +9,15 @@ const {
 class DicOfficeCorrespondenceController {
   async getAll(req, res) {
     try {
+      const filter = { ...req.filter };
+      console.log(filter);
+      if (!filter.where) {
+        filter.where = {};
+      } else {
+        filter.where = { ...filter.where };
+      }
       const dic_office_correspondence = await DIC_OFFICE_CORRESPONDENCE.findAll({
+        ...filter,
         include: [{ all: true, nested: true, duplicating: true }],
       });
       return res.status(errors.success.code).json(dic_office_correspondence);
