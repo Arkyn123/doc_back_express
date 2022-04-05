@@ -25,6 +25,25 @@ class DocumentController {
           [Op.iLike]: `%${req.query.officeName}%`,
         };
       }
+      if (req.query.fullname) {
+        filter.where["body.fullname"] = {
+          [Op.iLike]: `%${req.query.fullname}%`,
+        };
+      }
+      if (req.query.modelDate) {
+        if (req.query.modelDate.length == 10) {
+          filter.where["dateApplication"] = {
+            [Op.eq]: new Date(req.query.modelDate),
+          };
+        } else {
+          const modelDate = JSON.parse(req.query.modelDate);
+          filter.where["dateApplication"] = {
+            [Op.gte]: new Date(modelDate.from),
+            [Op.lte]: new Date(modelDate.to),
+          };
+        }
+      }
+
       // const new_filter = {
       //   [Op.or]: filter,
       // }
@@ -33,7 +52,7 @@ class DocumentController {
         ...filter,
         include: [{ all: true, nested: true, duplicating: true }],
       });
-      console.table(documents.map((doc) => doc.dataValues));
+      // console.table(documents.map((doc) => doc.dataValues));
       return res.status(errors.success.code).json(documents);
     } catch (e) {
       console.warn(e);
@@ -53,8 +72,8 @@ class DocumentController {
         },
         include: [{ all: true, nested: true, duplicating: true }],
       });
-      
-      return res.status(errors.success.code).json({document, route});
+
+      return res.status(errors.success.code).json({ document, route });
     } catch (e) {
       return res.sendStatus(errors.internalServerError.code);
     }
@@ -62,13 +81,34 @@ class DocumentController {
 
   async addNewDocument(req, res) {
     try {
-      const result = await Document.create({ ...req.body.body });
-      // const rcs = req.body.body.routeCoordinations.map((rc) => ({
-      //   ...rc,
-      //   documentId: result.dataValues.id,
-      //   statusId: 1,
-      // }));
-      // const rcRes = await RouteCoordination.bulkCreate(rcs);
+      const result = await Document.create({
+        body: req.body.body,
+        documentTypeId: req.body.documentTypeId,
+        authorPersonalNumber: req.body.authorPersonalNumber,
+        dateApplication: req.body.body.dateApplication,
+        statusId: 3,
+        order: 1,
+      });
+      return res.status(errors.success.code).json(result.dataValues);
+    } catch (e) {
+      console.log(e);
+      if (e instanceof ValidationError) {
+        return res.sendStatus(errors.badRequest.code);
+      }
+      return res.sendStatus(errors.internalServerError.code);
+    }
+  }
+
+  async addNewDocumentInDraft(req, res) {
+    try {
+      const result = await Document.create({
+        body: req.body.body,
+        documentTypeId: req.body.documentTypeId,
+        authorPersonalNumber: req.body.authorPersonalNumber,
+        dateApplication: req.body.body.dateApplication,
+        statusId: 1,
+        order: 1,
+      });
       return res.status(errors.success.code).json(result.dataValues);
     } catch (e) {
       console.log(e);
@@ -100,13 +140,9 @@ class DocumentController {
       console.log(route.dataValues.permition);
       // if (!ownerOrHasPermissions(req, document))
       //   return res.sendStatus(errors.forbidden.code);
-      // const documentRoute = await DocumentRoute.findOne({
-      //   where: { documentTypeId: document.documentTypeId },
-      //   include: [{ all: true, nested: true, duplicating: true }],
-      // });
-      // console.log(documentRoute);
       console.log(req.body.agree);
-      if (req.roles == route.dataValues.permition) {
+      console.log(req.roles);
+      if (req.roles.includes(route.dataValues.permition)) {
         if (document.dataValues.statusId == 3 && req.body.agree) {
           if (document.dataValues.order < 4) {
             await document.increment("order", { by: 1 });
@@ -114,21 +150,59 @@ class DocumentController {
             await document.increment("statusId", { by: 1 });
           }
           await document.update({
-            ...req.body.updatedDocument,
+            body: req.body.updatedDocument,
+            message: req.body.message,
+            registrationNumber: req.body.registrationNumber,
           });
         } else if (document.dataValues.statusId == 3 && !req.body.agree) {
           await document.update({
             statusId: 2,
             order: 1,
+            body: req.body.updatedDocument,
+            message: req.body.message,
           });
         }
         console.log(
           `order ${document.dataValues.order}, statusId ${document.dataValues.statusId}`
         );
       }
-
       return res.status(errors.success.code).json(document);
     } catch (e) {
+      console.log(e);
+      return res.sendStatus(errors.internalServerError.code);
+    }
+  }
+
+  async updateDocumentFromDraftAndRevisionByDocumentId(req, res) {
+    try {
+      const document = await Document.findByPk(req.params.documentId, {
+        include: [{ all: true, nested: true, duplicating: true }],
+      });
+      if (!document) {
+        return res.sendStatus(errors.notFound.code);
+      }
+      if (req.user.id == document.dataValues.authorPersonalNumber) {
+        await document.update({
+          body: req.body.updatedDocument,
+          statusId: 3,
+          order: 1,
+        });
+      }
+      return res.status(errors.success.code).json(document);
+    } catch (e) {
+      console.log(e);
+      return res.sendStatus(errors.internalServerError.code);
+    }
+  }
+
+  async deleteAllDocuments(req, res) {
+    try {
+      Document.destroy({
+        where: {},
+      });
+      return res.status(errors.success.code).json("delete all");
+    } catch (e) {
+      console.log(e);
       return res.sendStatus(errors.internalServerError.code);
     }
   }

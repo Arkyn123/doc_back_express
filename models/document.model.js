@@ -14,17 +14,21 @@ module.exports = (sequelize, DataTypes) => {
         },
         message: {
           type: DataTypes.STRING(256),
-          allowNull: false,
         },
         order: {
           type: DataTypes.INTEGER,
           allowNull: false,
+        },
+        authorPersonalNumber: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
+        registrationNumber: {
+          type: DataTypes.INTEGER,
+        },
+        dateApplication: {
+          type: DataTypes.DATE,
         }
-        //статус,
-        //цех, 
-        //регистрационный номер,
-        //дата регистрации
-
       },
       {
         freezeTableName: true,

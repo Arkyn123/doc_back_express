@@ -44,6 +44,9 @@ module.exports = {
         permissions.SDM_Secretary_Registration,
         permissions.SDM_Labor_Registration,
       ],
+      "/updateFromDraftAndRevision/:documentId": [
+        permissions.authenticated
+      ],
     },
   },
 };

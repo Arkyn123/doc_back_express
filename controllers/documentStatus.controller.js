@@ -5,17 +5,17 @@ const errors = require('../utils/errors')
 const log = require('../loggers/eventLog')
 
 class DocumentStatusController {
-    // async getAllStatusesWithFiltering(req, res) {
-    //     try {
-    //         const statuses = await DocumentStatus.findAll({ ...req.filter, include: StatusAssociation })
-    //         return res
-    //             .status(errors.success.code)
-    //             .json(statuses)
-    //     } catch (e) {
-    //         return res
-    //             .sendStatus(errors.internalServerError.code)
-    //     }
-    // }
+    async getAllStatuses(req, res) {
+        try {
+            const statuses = await DocumentStatus.findAll()
+            return res
+                .status(errors.success.code)
+                .json(statuses)
+        } catch (e) {
+            return res
+                .sendStatus(errors.internalServerError.code)
+        }
+    }
 
     // async getStatusByStatusId(req, res) {
     //     try {

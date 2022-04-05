@@ -5,6 +5,8 @@ const setFilterFromClient = require('../filteringAndMiddleware/sequelizeFilterin
 const controller = require("../controllers/documentRoute.controller");
 
 router.get("/", controller.getAllDocumentRoute);
+router.get("/:documentTypeId", controller.getDocumentRouteByDocumentTypeId);
 router.post("/add", controller.addNewDocumentRoute);
+router.delete('/delete/:documentTypeId', controller.deleteDocumentRouteById);
 
 module.exports = router;

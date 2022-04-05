@@ -12,12 +12,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(256),
         allowNull: false,
       },
-      // id автора статьи
       ownerId: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      // ФИО автора статьи
       ownerFullname: {
         type: DataTypes.STRING(128),
         allowNull: false,

@@ -9,7 +9,15 @@ module.exports = (sequelize, DataTypes) => {
         description: {
             type: DataTypes.STRING(512),
             allowNull: false
-        }
+        },
+        ownerId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+          },
+          ownerFullname: {
+            type: DataTypes.STRING(128),
+            allowNull: false,
+          },
     }, {
         timestamps: false,
         freezeTableName: true

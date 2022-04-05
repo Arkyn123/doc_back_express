@@ -157,6 +157,12 @@ middleware.setRolesToRequest = async (req, res, next) => {
         if(req.user.id == 181755) {
             roles.push('SDM_Secretary_Registration')
         }
+        if(req.user.id == 181754) {
+            roles.push('SDM_Secretary_Check')
+            roles.push('SDM_Labor_Check')
+            roles.push('SDM_Secretary_Registration')
+            roles.push('SDM_Labor_Registration')
+        }
         // Если кеширование ролей включено, и л.н. не найден в кеше, а получен из сервиса, 
         // то помещаем роли в кеш, время хранения пользователя в кеше равно config.redis.types.roles.cachingTimeInMinutes
         // в минутах
