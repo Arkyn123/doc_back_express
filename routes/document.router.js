@@ -4,12 +4,12 @@ const setFilterFromClient = require('../filteringAndMiddleware/sequelizeFilterin
 const { permissions } = require('../filteringAndMiddleware/middleware')
 const controller = require("../controllers/document.controller");
 
-router.get("/", setFilterFromClient, controller.getAllDocument);
-router.get("/:documentId", controller.getDocumentById);
-router.post("/add", controller.addNewDocument);
-router.post("/addInDraft", controller.addNewDocumentInDraft);
+router.get("/", permissions, setFilterFromClient, controller.getAllDocument);
+router.get("/:documentId", permissions, controller.getDocumentById);
+router.post("/add", permissions, controller.addNewDocument);
+router.post("/addInDraft", permissions, controller.addNewDocumentInDraft);
 router.put('/update/:documentId', permissions, controller.updateDocumentByDocumentId)
 router.put('/updateFromDraftAndRevision/:documentId', permissions, controller.updateDocumentFromDraftAndRevisionByDocumentId)
-router.delete('/delete', controller.deleteAllDocuments)
+router.delete('/delete', permissions, controller.deleteAllDocuments)
 
 module.exports = router;

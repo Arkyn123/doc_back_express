@@ -1,7 +1,6 @@
 const db = require("../models");
 const dbMSSQL = require("../modelsMSSQL");
 const { Document, DocumentRoute, RouteCoordination, Sequelize } = db;
-const { DIC_OFFICE, DIC_OFFICE_CORRESPONDENCE } = dbMSSQL;
 const { ValidationError, Op } = Sequelize;
 const errors = require("../utils/errors");
 const {
@@ -68,26 +67,30 @@ class DocumentController {
       const route = await DocumentRoute.findOne({
         where: {
           orderId: document.dataValues.order,
-          documentTypeId: document.dataValues.documentTypeId,
+          documentType: document.dataValues.documentType,
         },
         include: [{ all: true, nested: true, duplicating: true }],
       });
 
-      return res.status(errors.success.code).json({ document, route });
+      return res.status(errors.success.code).json({document, route});
     } catch (e) {
+      console.log(e)
       return res.sendStatus(errors.internalServerError.code);
     }
   }
 
   async addNewDocument(req, res) {
     try {
+      console.log(req.user);
       const result = await Document.create({
         body: req.body.body,
-        documentTypeId: req.body.documentTypeId,
-        authorPersonalNumber: req.body.authorPersonalNumber,
+        documentType: req.body.documentType,
+        authorPersonalNumber: req.user.id,
+        authorFullname: req.user.fullname,
         dateApplication: req.body.body.dateApplication,
         statusId: 3,
         order: 1,
+        documentTemplateID: req.body.documentTemplateID,
       });
       return res.status(errors.success.code).json(result.dataValues);
     } catch (e) {
@@ -103,11 +106,13 @@ class DocumentController {
     try {
       const result = await Document.create({
         body: req.body.body,
-        documentTypeId: req.body.documentTypeId,
-        authorPersonalNumber: req.body.authorPersonalNumber,
+        documentType: req.body.documentType,
+        authorPersonalNumber: req.user.id,
+        authorFullname: req.user.fullname,
         dateApplication: req.body.body.dateApplication,
         statusId: 1,
         order: 1,
+        documentTemplateID: req.body.documentTemplateID,
       });
       return res.status(errors.success.code).json(result.dataValues);
     } catch (e) {
@@ -124,16 +129,13 @@ class DocumentController {
       const document = await Document.findByPk(req.params.documentId, {
         include: [{ all: true, nested: true, duplicating: true }],
       });
-      console.log(
-        `order ${document.dataValues.order}, statusId ${document.dataValues.statusId}`
-      );
       if (!document) {
         return res.sendStatus(errors.notFound.code);
       }
       const route = await DocumentRoute.findOne({
         where: {
           orderId: document.dataValues.order,
-          documentTypeId: document.dataValues.documentTypeId,
+          documentType: document.dataValues.documentType,
         },
         include: [{ all: true, nested: true, duplicating: true }],
       });
@@ -153,6 +155,9 @@ class DocumentController {
             body: req.body.updatedDocument,
             message: req.body.message,
             registrationNumber: req.body.registrationNumber,
+            documentTemplateID: req.body.documentTemplateID,
+            name: req.body.name,
+            resource: req.body.resource
           });
         } else if (document.dataValues.statusId == 3 && !req.body.agree) {
           await document.update({
@@ -160,6 +165,9 @@ class DocumentController {
             order: 1,
             body: req.body.updatedDocument,
             message: req.body.message,
+            documentTemplateID: req.body.documentTemplateID,
+            name: req.body.name,
+            resource: req.body.resource
           });
         }
         console.log(
@@ -181,11 +189,16 @@ class DocumentController {
       if (!document) {
         return res.sendStatus(errors.notFound.code);
       }
+      if (!ownerOrHasPermissions(req, document))
+        return res.sendStatus(errors.forbidden.code);
       if (req.user.id == document.dataValues.authorPersonalNumber) {
         await document.update({
           body: req.body.updatedDocument,
           statusId: 3,
           order: 1,
+          documentTemplateID: req.body.documentTemplateID,
+          name: req.body.name,
+          resource: req.body.resource
         });
       }
       return res.status(errors.success.code).json(document);

@@ -23,11 +23,20 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.INTEGER,
           allowNull: false,
         },
+        authorFullname: {
+          type: DataTypes.STRING(256),
+          allowNull: false,
+        },
         registrationNumber: {
           type: DataTypes.INTEGER,
         },
-        dateApplication: {
-          type: DataTypes.DATE,
+        documentTemplateID: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
+        documentType: {
+          type: DataTypes.STRING(256),
+          allowNull: false,
         }
       },
       {
@@ -37,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
     Document.associate = function (models) {
       Document.belongsTo(models.DocumentStatus, { as: "status" })
       // Document.belongsTo(models.DocumentRoute, { as: "route" })
-      Document.belongsTo(models.DocumentType, { as: "documentType" });
+      // Document.belongsTo(models.DocumentType, { as: "documentType" , keyType: DataTypes.STRING(256)}); 
     };
     return Document;
   };

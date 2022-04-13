@@ -1,15 +1,10 @@
 const Router = require('express').Router
 const router = new Router()
+// const setFilterFromClient = require('../filteringAndMiddleware/sequelizeFiltering')
+const { permissions } = require('../filteringAndMiddleware/middleware')
 
 const controller = require('../controllers/documentStatus.controller')
 
-// const setFilterFromClient = require('../filteringAndMiddleware/sequelizeFiltering')
-// const { permissions } = require('../filteringAndMiddleware/middleware')
-
-router.get('/', controller.getAllStatuses)
-// router.get('/view/:statusId', controller.getStatusByStatusId)
-router.post('/add', controller.addNewStatus)
-// router.put('/update/:statusId', controller.updateStatusByStatusId)
-// router.delete('/delete/:statusId', controller.deleteStatusByStatusId)
-
+router.get('/', permissions, controller.getAllStatuses)
+router.post('/add', permissions, controller.addNewStatus)
 module.exports = router

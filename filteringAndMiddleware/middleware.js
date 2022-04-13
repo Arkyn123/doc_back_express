@@ -155,9 +155,11 @@ middleware.setRolesToRequest = async (req, res, next) => {
         // Форматирование массива ролей
         const roles = userDataFromGraphQL.Workers[0].permissions.map(permission => permission.idAccessCode)
         if(req.user.id == 181755) {
+            roles.push('admin')
             roles.push('SDM_Secretary_Registration')
         }
         if(req.user.id == 181754) {
+            roles.push('admin')
             roles.push('SDM_Secretary_Check')
             roles.push('SDM_Labor_Check')
             roles.push('SDM_Secretary_Registration')

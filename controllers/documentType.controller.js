@@ -1,5 +1,5 @@
 const db = require("../models");
-const { DocumentType, Sequelize } = db;
+const { DocumentType, DocumentTypeKolba, Sequelize } = db;
 const { ValidationError } = Sequelize;
 const errors = require("../utils/errors");
 const {
@@ -21,6 +21,19 @@ class DocumentTypeController {
     console.log(req.body)
     try {
       const result = await DocumentType.create({ ...req.body });
+      return res.status(errors.success.code).json(result.dataValues);
+    } catch (e) {
+      console.log(e);
+      if (e instanceof ValidationError) {
+        return res.sendStatus(errors.badRequest.code);
+      }
+      return res.sendStatus(errors.internalServerError.code);
+    }
+  }
+  async addNewDocumentTypeKolba(req, res) {
+    console.log(req.body)
+    try {
+      const result = await DocumentTypeKolba.create({ ...req.body });
       return res.status(errors.success.code).json(result.dataValues);
     } catch (e) {
       console.log(e);

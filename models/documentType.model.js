@@ -3,21 +3,8 @@ module.exports = (sequelize, DataTypes) => {
     "DocumentType",
     {
       id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-        allowNull: false,
-      },
-      description: {
         type: DataTypes.STRING(256),
-        allowNull: false,
-      },
-      ownerId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      ownerFullname: {
-        type: DataTypes.STRING(128),
+        primaryKey: true,
         allowNull: false,
       },
     },

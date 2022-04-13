@@ -16,6 +16,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(256),
         allowNull: false,
       },
+      description: {
+        type: DataTypes.STRING(256),
+        allowNull: false,
+      },
       ownerId: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -24,15 +28,19 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(128),
         allowNull: false,
       },
+      documentType: {
+        type: DataTypes.STRING(256),
+        allowNull: false,
+      }
     },
     {
       freezeTableName: true,
     }
   );
-  DocumentRoute.associate = function (models) {
-    // Джоины
-    DocumentRoute.belongsTo(models.DocumentType, { as: "documentType" });
-  };
+  // DocumentRoute.associate = function (models) {
+  //   // Джоины
+  //   DocumentRoute.belongsTo(models.DocumentType, { as: "documentType"});
+  // };
 
   return DocumentRoute;
 };
