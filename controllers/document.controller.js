@@ -20,12 +20,12 @@ class DocumentController {
         filter.where = { ...filter.where };
       }
       if (req.query.officeName) {
-        filter.where["body.officeName"] = {
+        filter.where["officeName"] = {
           [Op.iLike]: `%${req.query.officeName}%`,
         };
       }
       if (req.query.fullname) {
-        filter.where["body.fullname"] = {
+        filter.where["authorFullname"] = {
           [Op.iLike]: `%${req.query.fullname}%`,
         };
       }
@@ -72,25 +72,28 @@ class DocumentController {
         include: [{ all: true, nested: true, duplicating: true }],
       });
 
-      return res.status(errors.success.code).json({document, route});
+      return res.status(errors.success.code).json({ document, route });
     } catch (e) {
-      console.log(e)
+      console.log(e);
       return res.sendStatus(errors.internalServerError.code);
     }
   }
 
   async addNewDocument(req, res) {
+    console.log(req.body.users)
     try {
-      console.log(req.user);
+      console.log(req.body.registrationNumber);
       const result = await Document.create({
         body: req.body.body,
         documentType: req.body.documentType,
         authorPersonalNumber: req.user.id,
         authorFullname: req.user.fullname,
-        dateApplication: req.body.body.dateApplication,
+        dateApplication: req.body.dateApplication,
         statusId: 3,
         order: 1,
         documentTemplateID: req.body.documentTemplateID,
+        users: req.body.users,
+        officeName: req.body.officeName,
       });
       return res.status(errors.success.code).json(result.dataValues);
     } catch (e) {
@@ -109,10 +112,12 @@ class DocumentController {
         documentType: req.body.documentType,
         authorPersonalNumber: req.user.id,
         authorFullname: req.user.fullname,
-        dateApplication: req.body.body.dateApplication,
+        dateApplication: req.body.dateApplication,
         statusId: 1,
         order: 1,
         documentTemplateID: req.body.documentTemplateID,
+        users: req.body.users,
+        officeName: req.body.officeName,
       });
       return res.status(errors.success.code).json(result.dataValues);
     } catch (e) {
@@ -139,44 +144,34 @@ class DocumentController {
         },
         include: [{ all: true, nested: true, duplicating: true }],
       });
-      console.log(route.dataValues.permition);
-      // if (!ownerOrHasPermissions(req, document))
-      //   return res.sendStatus(errors.forbidden.code);
-      console.log(req.body.agree);
-      console.log(req.roles);
+      if (!route) {
+        return res.sendStatus(errors.notFound.code);
+      }
+      if (!ownerOrHasPermissions(req, document))
+        return res.sendStatus(errors.forbidden.code);
       if (req.roles.includes(route.dataValues.permition)) {
         if (document.dataValues.statusId == 3 && req.body.agree) {
+          if (document.dataValues.order == 3) {
+            await document.update({
+              registrationNumber: req.body.registrationNumber,
+            });
+          }
           if (document.dataValues.order < 4) {
             await document.increment("order", { by: 1 });
           } else {
             await document.increment("statusId", { by: 1 });
           }
-          await document.update({
-            body: req.body.updatedDocument,
-            message: req.body.message,
-            registrationNumber: req.body.registrationNumber,
-            documentTemplateID: req.body.documentTemplateID,
-            name: req.body.name,
-            resource: req.body.resource
-          });
         } else if (document.dataValues.statusId == 3 && !req.body.agree) {
           await document.update({
             statusId: 2,
             order: 1,
-            body: req.body.updatedDocument,
             message: req.body.message,
-            documentTemplateID: req.body.documentTemplateID,
-            name: req.body.name,
-            resource: req.body.resource
           });
         }
-        console.log(
-          `order ${document.dataValues.order}, statusId ${document.dataValues.statusId}`
-        );
+        return res.status(errors.success.code).json(document);
       }
-      return res.status(errors.success.code).json(document);
+      return res.sendStatus(errors.forbidden.code);
     } catch (e) {
-      console.log(e);
       return res.sendStatus(errors.internalServerError.code);
     }
   }
@@ -196,9 +191,6 @@ class DocumentController {
           body: req.body.updatedDocument,
           statusId: 3,
           order: 1,
-          documentTemplateID: req.body.documentTemplateID,
-          name: req.body.name,
-          resource: req.body.resource
         });
       }
       return res.status(errors.success.code).json(document);

@@ -7,18 +7,25 @@ const permissions = {
   // },
   SDM_Secretary_Check: {
     role: "SDM_Secretary_Check",
+    field: { officeName: "officeName" },
   },
   SDM_Labor_Check: {
     role: "SDM_Labor_Check",
+    field: { officeName: "officeName" },
   },
   SDM_Secretary_Registration: {
     role: "SDM_Secretary_Registration",
+    field: { officeName: "officeName" },
   },
   SDM_Labor_Registration: {
     role: "SDM_Labor_Registration",
+    field: { officeName: "officeName" },
   },
   owner: {
-    field: "ownerId",
+    field: { ownerId: "id" },
+  },
+  documentAuthor: {
+    field: { authorPersonalNumber: "id" },
   },
   authenticated: {
     authenticated: true,
@@ -53,21 +60,7 @@ module.exports = {
         permissions.SDM_Secretary_Registration,
         permissions.SDM_Labor_Registration,
       ],
-      "/updateFromDraftAndRevision/:documentId": [permissions.owner],
-      "/delete": [permissions.admin],
-    },
-    documentKolba: {
-      "/": [permissions.authenticated],
-      "/:documentId": [permissions.authenticated],
-      "/add": [permissions.authenticated],
-      "/addInDraft": [permissions.authenticated],
-      "/update/:documentId": [
-        permissions.SDM_Secretary_Check,
-        permissions.SDM_Labor_Check,
-        permissions.SDM_Secretary_Registration,
-        permissions.SDM_Labor_Registration,
-      ],
-      "/updateFromDraftAndRevision/:documentId": [permissions.owner],
+      "/updateFromDraftAndRevision/:documentId": [permissions.documentAuthor],
       "/delete": [permissions.admin],
     },
     documentRoute: {

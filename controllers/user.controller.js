@@ -7,7 +7,8 @@ class UserController {
         .status(errors.success.code)
         .json({
             user: req.user,
-            roles: req.roles
+            roles: req.roles,
+            officeId: req.officeId
         })
     }
 }
