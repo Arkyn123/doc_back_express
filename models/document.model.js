@@ -42,10 +42,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ARRAY(DataTypes.JSON),
         defaultValue: () => [],
       },
-      // usernames: {
-      //   type: DataTypes.ARRAY(DataTypes.STRING(64)),
-      //   defaultValue: () => [],
-      // },
+      usernames: {
+        type: DataTypes.ARRAY(DataTypes.STRING(128)),
+        defaultValue: () => [],
+      },
       officeName: {
         type: DataTypes.STRING(256),
       },

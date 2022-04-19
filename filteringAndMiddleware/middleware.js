@@ -3,9 +3,8 @@ var path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const db = require("../models");
 const { sequelize } = db;
-const axios = require("axios");
 const errors = require("../utils/errors");
-
+const fetch = require("node-fetch");
 // Хранилище файлов
 const storage = multer.diskStorage({
   // Папка для хранения
@@ -95,11 +94,15 @@ middleware.setUserToRequest = async (req, res, next) => {
     //     }
     // }
     // Если кеширование пользователей выключено или токен в кеше не найден, то получаем пользователя из сервиса
-    const userFromService = (
-      await axios.post(config.services.gatewayDecode, {
-        token,
+    const userFromService = await (
+      await fetch(config.services.gatewayDecode, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
       })
-    ).data;
+    ).json();
     // Форматирование объекта пользователя
     const user = {
       id: parseInt(userFromService.emp),
@@ -142,30 +145,31 @@ middleware.setRolesToRequest = async (req, res, next) => {
     // }
     // Если кеширование ролей выключено или л.н. пользователя в кеше не найден, то получаем роли из сервиса
     const userDataFromGraphQL = (
-      await axios.post(
-        config.services.users,
-        {
-          query: `query {
-                Workers(employeeNumber: ${req.user.id}) {
-                    positions {
-                        office {
-                            id
-                            name
-                        }
-                    }
-                    permissions {
-                        idAccessCode
-                    }
-                }
-            }`,
-        },
-        {
+      await (
+        await fetch(config.services.users, {
+          method: "POST",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${req.token}`,
           },
-        }
-      )
-    ).data.data;
+          body: JSON.stringify({
+            query: `query {
+              Workers(employeeNumber: ${req.user.id}) {
+                  positions {
+                      office {
+                          id
+                          name
+                      }
+                  }
+                  permissions {
+                      idAccessCode
+                  }
+              }
+          }`,
+          }),
+        })
+      ).json()
+    ).data;
 
     // Форматирование массива ролей
     const roles = userDataFromGraphQL.Workers[0].permissions.map(

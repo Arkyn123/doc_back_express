@@ -7,5 +7,4 @@ const controller = require("../controllers/documentType.controller");
 
 router.get("/", permissions, controller.getAllDocumentType);
 router.post("/add", permissions, controller.addNewDocumentType);
-router.post("/addKolba", controller.addNewDocumentTypeKolba);
 module.exports = router;

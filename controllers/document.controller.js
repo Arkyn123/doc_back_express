@@ -24,9 +24,9 @@ class DocumentController {
           [Op.iLike]: `%${req.query.officeName}%`,
         };
       }
-      if (req.query.fullname) {
-        filter.where["authorFullname"] = {
-          [Op.iLike]: `%${req.query.fullname}%`,
+      if (req.query.fullname) { 
+        filter.where["usernames"] = {
+          [Op.iLike]: `${req.query.fullname}`,
         };
       }
       if (req.query.modelDate) {
@@ -74,7 +74,6 @@ class DocumentController {
 
       return res.status(errors.success.code).json({ document, route });
     } catch (e) {
-      console.log(e);
       return res.sendStatus(errors.internalServerError.code);
     }
   }
@@ -91,12 +90,11 @@ class DocumentController {
         order: 1,
         documentTemplateID: req.body.documentTemplateID,
         users: req.body.users,
-        // usernames: req.body.users.map(u=> u.fullname),
+        usernames: req.body.users.map((u) => u.fullname),
         officeName: req.body.officeName,
       });
       return res.status(errors.success.code).json(result.dataValues);
     } catch (e) {
-      console.log(e);
       if (e instanceof ValidationError) {
         return res.sendStatus(errors.badRequest.code);
       }
@@ -116,11 +114,11 @@ class DocumentController {
         order: 1,
         documentTemplateID: req.body.documentTemplateID,
         users: req.body.users,
+        usernames: req.body.users.map((u) => u.fullname),
         officeName: req.body.officeName,
       });
       return res.status(errors.success.code).json(result.dataValues);
     } catch (e) {
-      console.log(e);
       if (e instanceof ValidationError) {
         return res.sendStatus(errors.badRequest.code);
       }
@@ -199,7 +197,6 @@ class DocumentController {
       }
       return res.status(errors.success.code).json(document);
     } catch (e) {
-      console.log(e);
       return res.sendStatus(errors.internalServerError.code);
     }
   }
@@ -210,8 +207,7 @@ class DocumentController {
         where: {},
       });
       return res.status(errors.success.code).json("delete all");
-    } catch (e) {
-      console.log(e);
+    } catch (e) {;
       return res.sendStatus(errors.internalServerError.code);
     }
   }

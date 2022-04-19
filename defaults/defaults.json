@@ -1,0 +1,8 @@
+{
+    "DocumentStatus": [
+        { "id": 1, "description": "Черновик", "ownerId": 181755, "ownerFullname": "Воробьев Алексей Павлович" },
+        { "id": 2, "description": "На доработке", "ownerId": 181755, "ownerFullname": "Воробьев Алексей Павлович" },
+        { "id": 3, "description": "На согласовании", "ownerId": 181755, "ownerFullname": "Воробьев Алексей Павлович" },
+        { "id": 4, "description": "Утверждён", "ownerId": 181755, "ownerFullname": "Воробьев Алексей Павлович" }
+    ]
+}

@@ -32,19 +32,23 @@ app.use(`${config.server.urlPrefix}/documentStatus`, documentStatusRouter);
 const dicOfficeRouter = require("./routes/dicOffice.router");
 app.use(`${config.server.urlPrefix}/dicOffice`, dicOfficeRouter);
 const dicOfficeRouterCorrespondence = require("./routes/dicOfficeCorrespondence.router");
-app.use(`${config.server.urlPrefix}/dicOfficeCorrespondence`, dicOfficeRouterCorrespondence);
+app.use(
+  `${config.server.urlPrefix}/dicOfficeCorrespondence`,
+  dicOfficeRouterCorrespondence
+);
 const documentTypeRouter = require("./routes/documentType.router");
 app.use(`${config.server.urlPrefix}/documentType`, documentTypeRouter);
 const documentRouteRouter = require("./routes/documentRoute.router");
 app.use(`${config.server.urlPrefix}/documentRoute`, documentRouteRouter);
-const userRouter = require('./routes/user.router');
-app.use(`${config.server.urlPrefix}/user`, userRouter)
+const userRouter = require("./routes/user.router");
+app.use(`${config.server.urlPrefix}/user`, userRouter);
 // Запуск сервера
 const startServer = async () => {
   const db = require("./models");
   const dbMSSQL = require("./modelsMSSQL");
   const fs = require("fs");
   const path = require("path");
+  const fetch = require("node-fetch");
   try {
     // Синхронизация моделей с базой данных, флаг resetDatabaseOnRestart отвечает за принудительную очистку базы данных при перезапуске сервера
     await db.sequelize.sync({ force: config.server.resetDatabaseOnRestart });
@@ -58,6 +62,95 @@ const startServer = async () => {
         `DB connected\t${config.database.dialect}://${config.database.host}:${config.database.port}`
       );
       if (config.server.resetDatabaseOnRestart) {
+        const defaultsValues = require("./defaults/defaults.json");
+        Object.keys(defaultsValues).forEach(async (d) => {
+          await db[d].bulkCreate(defaultsValues[d]);
+        });
+        fetch("http://10.11.13.224:8777/api/template")
+          .then((res) => res.json())
+          .then((templates) => {
+            db["DocumentType"].bulkCreate(
+              templates.map((template) => ({
+                id: template.name,
+              }))
+            );
+            // db["DocumentRoute"].bulkCreate(
+            //   templates.map((template) => [
+            //     {
+            //       documentType: template.name,
+            //       orderId: 1,
+            //       permition: "SDM_SECRETARY_CHECK",
+            //       description: "Проверка секретарём",
+            //       ownerId: 181755,
+            //       ownerFullname: "Воробьев Алексей Павлович",
+            //     },
+            //     {
+            //       documentType: template.name,
+            //       orderId: 2,
+            //       permition: "SDM_LABOR_CHECK",
+            //       description: "Проверка работником по труду",
+            //       ownerId: 181755,
+            //       ownerFullname: "Воробьев Алексей Павлович",
+            //     },
+            //     {
+            //       documentType: template.name,
+            //       orderId: 3,
+            //       permition: "SDM_SECRETARY_REGISTRATION",
+            //       description: "Регистрация секретарём",
+            //       ownerId: 181755,
+            //       ownerFullname: "Воробьев Алексей Павлович",
+            //     },
+            //     {
+            //       documentType: template.name,
+            //       orderId: 4,
+            //       permition: "SDM_LABOR_REGISTRATION",
+            //       description: "Регистрация работником по труду",
+            //       ownerId: 181755,
+            //       ownerFullname: "Воробьев Алексей Павлович",
+            //     },
+            //   ])
+            // );
+            db["DocumentRoute"].bulkCreate(
+              templates.map((template) => ({
+                documentType: template.name,
+                orderId: 1,
+                permition: "SDM_SECRETARY_CHECK",
+                description: "Проверка секретарём",
+                ownerId: 181755,
+                ownerFullname: "Воробьев Алексей Павлович",
+              }))
+            );
+            db["DocumentRoute"].bulkCreate(
+              templates.map((template) => ({
+                documentType: template.name,
+                orderId: 2,
+                permition: "SDM_LABOR_CHECK",
+                description: "Проверка работником по труду",
+                ownerId: 181755,
+                ownerFullname: "Воробьев Алексей Павлович",
+              }))
+            );
+            db["DocumentRoute"].bulkCreate(
+              templates.map((template) => ({
+                documentType: template.name,
+                orderId: 3,
+                permition: "SDM_SECRETARY_REGISTRATION",
+                description: "Регистрация секретарём",
+                ownerId: 181755,
+                ownerFullname: "Воробьев Алексей Павлович",
+              }))
+            );
+            db["DocumentRoute"].bulkCreate(
+              templates.map((template) => ({
+                documentType: template.name,
+                orderId: 4,
+                permition: "SDM_LABOR_REGISTRATION",
+                description: "Регистрация работником по труду",
+                ownerId: 181755,
+                ownerFullname: "Воробьев Алексей Павлович",
+              }))
+            );
+          });
         console.log("Database and uploads dropped, Defaults loaded");
       }
       connected = true;
