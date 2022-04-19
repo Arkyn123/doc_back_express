@@ -35,7 +35,7 @@
     "production": {
         "database": {
             "username": "postgres",
-            "password": null,
+            "password": "1qasw2#ED",
             "database": "documents",
             "host": "localhost",
             "port": 5432,
@@ -53,12 +53,12 @@
         },   
         "server": {
             "protocol": "http",
-            "host": "localhost",
-            "port": 8081,
+            "host": "10.11.62.74",
+            "port": 3012,
             "errorRestartIntervalInMinutes": 1,
             "resetDatabaseOnRestart": false,
             "requestMaxSize": "100mb",
-            "urlPrefix": "/api"
+            "urlPrefix": "/service/documents_back/api"
         },
         "services": {
             "gatewayDecode": "http://10.11.62.74:3000/decode",
