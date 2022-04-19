@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       registrationNumber: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(128),
       },
       documentTemplateID: {
         type: DataTypes.INTEGER,
@@ -42,12 +42,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ARRAY(DataTypes.JSON),
         defaultValue: () => [],
       },
+      // usernames: {
+      //   type: DataTypes.ARRAY(DataTypes.STRING(64)),
+      //   defaultValue: () => [],
+      // },
       officeName: {
         type: DataTypes.STRING(256),
       },
       dateApplication: {
         type: DataTypes.DATE,
-      }
+      },
     },
     {
       freezeTableName: true,

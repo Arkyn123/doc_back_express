@@ -174,14 +174,14 @@ middleware.setRolesToRequest = async (req, res, next) => {
     const office = userDataFromGraphQL.Workers[0].positions[0].office;
     if (req.user.id == 181755) {
       roles.push("admin");
-      roles.push("SDM_Labor_Check");
+      // roles.push("SDM_Secretary_Check");
     }
     if (req.user.id == 181754) {
       roles.push("admin");
-      roles.push("SDM_Secretary_Check");
-      roles.push("SDM_Labor_Check");
-      roles.push("SDM_Secretary_Registration");
-      roles.push("SDM_Labor_Registration");
+      roles.push("SDM_SECRETARY_CHECK");
+      roles.push("SDM_LABOR_CHECK");
+      roles.push("SDM_SECRETARY_REGISTRATION");
+      roles.push("SDM_LABOR_REGISTRATION");
     }
     // Если кеширование ролей включено, и л.н. не найден в кеше, а получен из сервиса,
     // то помещаем роли в кеш, время хранения пользователя в кеше равно config.redis.types.roles.cachingTimeInMinutes

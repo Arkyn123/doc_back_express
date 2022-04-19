@@ -80,9 +80,7 @@ class DocumentController {
   }
 
   async addNewDocument(req, res) {
-    console.log(req.body.users)
     try {
-      console.log(req.body.registrationNumber);
       const result = await Document.create({
         body: req.body.body,
         documentType: req.body.documentType,
@@ -93,6 +91,7 @@ class DocumentController {
         order: 1,
         documentTemplateID: req.body.documentTemplateID,
         users: req.body.users,
+        // usernames: req.body.users.map(u=> u.fullname),
         officeName: req.body.officeName,
       });
       return res.status(errors.success.code).json(result.dataValues);
@@ -191,6 +190,11 @@ class DocumentController {
           body: req.body.updatedDocument,
           statusId: 3,
           order: 1,
+          dateApplication: req.body.dateApplication,
+          documentTemplateID: req.body.documentTemplateID,
+          users: req.body.users,
+          officeName: req.body.officeName,
+          documentType: req.body.documentType,
         });
       }
       return res.status(errors.success.code).json(document);

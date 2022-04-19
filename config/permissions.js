@@ -6,19 +6,19 @@ const permissions = {
   //   role: "SDM",
   // },
   SDM_Secretary_Check: {
-    role: "SDM_Secretary_Check",
+    role: "SDM_SECRETARY_CHECK",
     field: { officeName: "officeName" },
   },
   SDM_Labor_Check: {
-    role: "SDM_Labor_Check",
+    role: "SDM_LABOR_CHECK",
     field: { officeName: "officeName" },
   },
   SDM_Secretary_Registration: {
-    role: "SDM_Secretary_Registration",
+    role: "SDM_SECRETARY_REGISTRATION",
     field: { officeName: "officeName" },
   },
   SDM_Labor_Registration: {
-    role: "SDM_Labor_Registration",
+    role: "SDM_LABOR_REGISTRATION",
     field: { officeName: "officeName" },
   },
   owner: {
@@ -74,8 +74,8 @@ module.exports = {
       "/add": [permissions.admin],
     },
     documentType: {
-      "/": [],
-      "/add": [],
+      "/": [permissions.authenticated],
+      "/add": [permissions.admin],
     },
     user: {
       "/": [permissions.authenticated],
