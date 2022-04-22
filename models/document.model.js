@@ -19,6 +19,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      permitionCurrent: {
+        type: DataTypes.STRING(256),
+      },
       authorPersonalNumber: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -43,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: () => [],
       },
       usernames: {
-        type: DataTypes.ARRAY(DataTypes.STRING(128)),
+        type: DataTypes.STRING(512),
         defaultValue: () => [],
       },
       officeName: {
@@ -59,7 +62,6 @@ module.exports = (sequelize, DataTypes) => {
   );
   Document.associate = function (models) {
     Document.belongsTo(models.DocumentStatus, { as: "status" });
-    // Document.belongsTo(models.DocumentRoute, { as: "route" })
     // Document.belongsTo(models.DocumentType, { as: "documentType" , keyType: DataTypes.STRING(256)});
   };
   return Document;

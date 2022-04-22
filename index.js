@@ -66,7 +66,7 @@ const startServer = async () => {
         Object.keys(defaultsValues).forEach(async (d) => {
           await db[d].bulkCreate(defaultsValues[d]);
         });
-        fetch("http://10.11.13.224:8777/api/template")
+        fetch("http://10.11.62.74:3000/service/documents_templater/api/template")
           .then((res) => res.json())
           .then((templates) => {
             db["DocumentType"].bulkCreate(
@@ -74,42 +74,6 @@ const startServer = async () => {
                 id: template.name,
               }))
             );
-            // db["DocumentRoute"].bulkCreate(
-            //   templates.map((template) => [
-            //     {
-            //       documentType: template.name,
-            //       orderId: 1,
-            //       permition: "SDM_SECRETARY_CHECK",
-            //       description: "Проверка секретарём",
-            //       ownerId: 181755,
-            //       ownerFullname: "Воробьев Алексей Павлович",
-            //     },
-            //     {
-            //       documentType: template.name,
-            //       orderId: 2,
-            //       permition: "SDM_LABOR_CHECK",
-            //       description: "Проверка работником по труду",
-            //       ownerId: 181755,
-            //       ownerFullname: "Воробьев Алексей Павлович",
-            //     },
-            //     {
-            //       documentType: template.name,
-            //       orderId: 3,
-            //       permition: "SDM_SECRETARY_REGISTRATION",
-            //       description: "Регистрация секретарём",
-            //       ownerId: 181755,
-            //       ownerFullname: "Воробьев Алексей Павлович",
-            //     },
-            //     {
-            //       documentType: template.name,
-            //       orderId: 4,
-            //       permition: "SDM_LABOR_REGISTRATION",
-            //       description: "Регистрация работником по труду",
-            //       ownerId: 181755,
-            //       ownerFullname: "Воробьев Алексей Павлович",
-            //     },
-            //   ])
-            // );
             db["DocumentRoute"].bulkCreate(
               templates.map((template) => ({
                 documentType: template.name,
