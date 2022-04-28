@@ -180,7 +180,7 @@ middleware.setRolesToRequest = async (req, res, next) => {
       roles.push("admin");
     }
     if (req.user.id == 181754) {
-      roles.push("admin");
+      // roles.push("admin");
       // roles.push("SDM_SECRETARY_CHECK");
       roles.push("SDM_LABOR_CHECK");
       // roles.push("SDM_SECRETARY_REGISTRATION");

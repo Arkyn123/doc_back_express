@@ -2,6 +2,9 @@ const permissions = {
   admin: {
     role: "admin",
   },
+  UEMI_ADMIN: {
+    role: "UEMI_ADMIN",
+  },
   // SDM: {
   //   role: "SDM",
   // },
@@ -34,20 +37,19 @@ const permissions = {
     authenticated: false,
   },
 };
-
 module.exports = {
   [config.server.urlPrefix]: {
     dicOffice: {
-      "/": [permissions.admin],
-      "/add": [permissions.admin],
-      "/update/:id": [permissions.admin],
-      "/delete/:id": [permissions.admin],
+      "/": [permissions.authenticated],
+      "/add": [permissions.admin, permissions.UEMI_ADMIN],
+      "/update/:id": [permissions.admin, permissions.UEMI_ADMIN],
+      "/delete/:id": [permissions.admin, permissions.UEMI_ADMIN],
     },
     dicOfficeCorrespondence: {
-      "/": [permissions.admin],
-      "/add": [permissions.admin],
-      "/update/:id": [permissions.admin],
-      "/delete/:id": [permissions.admin],
+      "/": [permissions.authenticated],
+      "/add": [permissions.admin, permissions.UEMI_ADMIN],
+      "/update/:id": [permissions.admin, permissions.UEMI_ADMIN],
+      "/delete/:id": [permissions.admin, permissions.UEMI_ADMIN],
     },
     document: {
       "/": [permissions.authenticated],
@@ -59,23 +61,24 @@ module.exports = {
         permissions.SDM_Labor_Check,
         permissions.SDM_Secretary_Registration,
         permissions.SDM_Labor_Registration,
+        permissions.UEMI_ADMIN
       ],
-      "/updateFromDraftAndRevision/:documentId": [permissions.documentAuthor],
-      "/delete": [permissions.admin],
+      "/updateFromDraftAndRevision/:documentId": [permissions.documentAuthor, permissions.UEMI_ADMIN],
+      "/delete": [permissions.admin, permissions.UEMI_ADMIN],
     },
     documentRoute: {
       "/": [permissions.authenticated],
       "/:documentTypeId": [permissions.authenticated],
-      "/add": [permissions.admin],
-      "/delete/:documentTypeId": [permissions.admin],
+      "/add": [permissions.admin, permissions.UEMI_ADMIN],
+      "/delete/:documentTypeId": [permissions.admin, permissions.UEMI_ADMIN],
     },
     documentStatus: {
       "/": [permissions.authenticated],
-      "/add": [permissions.admin],
+      "/add": [permissions.admin, permissions.UEMI_ADMIN],
     },
     documentType: {
       "/": [permissions.authenticated],
-      "/add": [permissions.admin],
+      "/add": [permissions.admin, permissions.UEMI_ADMIN],
     },
     user: {
       "/": [permissions.authenticated],
