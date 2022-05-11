@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       usernames: {
         type: DataTypes.STRING(512),
-        defaultValue: () => [],
+        defaultValue: () => "",
       },
       officeName: {
         type: DataTypes.STRING(256),

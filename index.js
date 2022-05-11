@@ -66,9 +66,11 @@ const startServer = async () => {
         Object.keys(defaultsValues).forEach(async (d) => {
           await db[d].bulkCreate(defaultsValues[d]);
         });
-        fetch("http://10.11.62.74:3000/service/documents_templater/api/template")
+        // fetch("http://10.11.62.74:3000/service/documents_templater/api/template")
+        fetch("http://10.11.13.224:8777/api/template")
           .then((res) => res.json())
           .then((templates) => {
+            templates = templates.filter((a, i) => templates.findIndex((s) => a.name === s.name) === i)
             db["DocumentType"].bulkCreate(
               templates.map((template) => ({
                 id: template.name,

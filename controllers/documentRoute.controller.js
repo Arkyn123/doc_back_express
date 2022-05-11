@@ -36,7 +36,6 @@ class DocumentRouteController {
   }
 
   async addNewDocumentRoute(req, res) {
-    console.log(req.body)
     try {
       const result = await DocumentRoute.create({ ...req.body });
       return res.status(errors.success.code).json(result.dataValues);
