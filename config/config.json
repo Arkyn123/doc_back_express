@@ -29,7 +29,8 @@
         },
         "services": {
             "gatewayDecode": "http://10.11.62.74:3000/decode",
-            "users": "http://10.11.62.74:3000/service/users/graphql"
+            "users": "http://10.11.62.74:3000/service/users/graphql",
+            "templater": "http://10.11.13.224:8777/api/template"
         }
     },
     "production": {
@@ -62,7 +63,8 @@
         },
         "services": {
             "gatewayDecode": "http://10.11.62.74:3000/decode",
-            "users": "http://10.11.62.74:3000/service/users/graphql"
+            "users": "http://10.11.62.74:3000/service/users/graphql",
+            "templater": "http://10.11.62.74:3000/service/documents_templater/api/template"
         }
     }
 }

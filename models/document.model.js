@@ -22,6 +22,9 @@ module.exports = (sequelize, DataTypes) => {
       permitionCurrent: {
         type: DataTypes.STRING(256),
       },
+      permitionCurrentDesc: {
+        type: DataTypes.STRING(256),
+      },
       authorPersonalNumber: {
         type: DataTypes.INTEGER,
         allowNull: false,

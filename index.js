@@ -67,7 +67,7 @@ const startServer = async () => {
           await db[d].bulkCreate(defaultsValues[d]);
         });
         // fetch("http://10.11.62.74:3000/service/documents_templater/api/template")
-        fetch("http://10.11.13.224:8777/api/template")
+        fetch(config.services.templater)//
           .then((res) => res.json())
           .then((templates) => {
             templates = templates.filter((a, i) => templates.findIndex((s) => a.name === s.name) === i)

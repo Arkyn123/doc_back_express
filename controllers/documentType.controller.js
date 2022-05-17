@@ -20,7 +20,7 @@ class DocumentTypeController {
   async addNewDocumentType(req, res) {
     console.log(req.body)
     try {
-      const result = await DocumentType.create({ ...req.body });
+      const result = await DocumentType.upsert({ ...req.body });
       return res.status(errors.success.code).json(result.dataValues);
     } catch (e) {
       console.log(e);

@@ -29,6 +29,11 @@ class DocumentController {
           [Op.iLike]: `%${req.query.fullname}%`,
         };
       }
+      if (req.query.authorFullname) {
+        filter.where["authorFullname"] = {
+          [Op.iLike]: `%${req.query.authorFullname}%`,
+        };
+      }
       if (req.query.myDocumentsFlag && req.query.myDocumentsFlag == "true") {
         filter.where["officeName"] = {
           [Op.eq]: req.user.officeName,
@@ -106,6 +111,7 @@ class DocumentController {
         statusId: 3,
         order: 1,
         permitionCurrent: route.dataValues.permition,
+        permitionCurrentDesc: route.dataValues.description,
         documentTemplateID: req.body.documentTemplateID,
         users: req.body.users,
         usernames: req.body.users.map((u) => u.fullname).join(),
@@ -140,14 +146,18 @@ class DocumentController {
         statusId: 1,
         order: 1,
         permitionCurrent: route.dataValues.permition,
+        permitionCurrentDesc: route.dataValues.description,
         documentTemplateID: req.body.documentTemplateID,
         users: req.body.users,
-        usernames: req.body.users[0]!=null?req.body.users.map((u) => u.fullname).join(): '',
+        usernames:
+          req.body.users[0] != null
+            ? req.body.users.map((u) => u.fullname).join()
+            : "",
         officeName: req.body.officeName,
       });
       return res.status(errors.success.code).json(document.dataValues);
     } catch (e) {
-      console.log(e)
+      console.log(e);
       if (e instanceof ValidationError) {
         return res.sendStatus(errors.badRequest.code);
       }
@@ -171,10 +181,10 @@ class DocumentController {
         include: [{ all: true, nested: true, duplicating: true }],
       });
       if (!route) {
-        return res.sendStatus(errors.notFound.code);
+        return res.sendStatus(errors.forbidden.code);
       }
       if (!ownerOrHasPermissions(req, document))
-        return res.sendStatus(errors.forbidden.code);
+        return res.status(errors.forbidden.code).json({message: "dwqdqw"});
       if (req.roles.includes(route.dataValues.permition)) {
         if (document.dataValues.statusId == 3 && req.body.agree) {
           if (document.dataValues.order == 3) {
@@ -196,6 +206,7 @@ class DocumentController {
             await document.update({
               order: orderNext,
               permitionCurrent: routeNext.dataValues.permition,
+              permitionCurrentDesc: routeNext.dataValues.description
             });
           } else {
             await document.increment("statusId", { by: 1 });
@@ -214,6 +225,7 @@ class DocumentController {
             statusId: 2,
             order: 1,
             permitionCurrent: routeNext.dataValues.permition,
+            permitionCurrentDesc: routeNext.dataValues.description,
             message: req.body.message,
           });
         }
@@ -221,7 +233,7 @@ class DocumentController {
       }
       return res.sendStatus(errors.forbidden.code);
     } catch (e) {
-      console.log(e)
+      console.log(e);
       return res.sendStatus(errors.internalServerError.code);
     }
   }
@@ -245,12 +257,25 @@ class DocumentController {
       }
       if (!ownerOrHasPermissions(req, document))
         return res.sendStatus(errors.forbidden.code);
-      if (req.user.id == document.dataValues.authorPersonalNumber) {
+      if (req.user.id == document.dataValues.authorPersonalNumber && !req.body.flagUpdateDraft) {
         await document.update({
           body: req.body.updatedDocument,
           statusId: 3,
           order: 1,
           permitionCurrent: route.dataValues.permition,
+          permitionCurrentDesc: route.dataValues.description,
+          dateApplication: req.body.dateApplication,
+          documentTemplateID: req.body.documentTemplateID,
+          users: req.body.users,
+          officeName: req.body.officeName,
+          documentType: req.body.documentType,
+        });
+      }
+      if (req.user.id == document.dataValues.authorPersonalNumber && req.body.flagUpdateDraft) {
+        await document.update({
+          body: req.body.updatedDocument,
+          permitionCurrent: route.dataValues.permition,
+          permitionCurrentDesc: route.dataValues.description,
           dateApplication: req.body.dateApplication,
           documentTemplateID: req.body.documentTemplateID,
           users: req.body.users,
