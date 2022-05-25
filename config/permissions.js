@@ -83,5 +83,8 @@ module.exports = {
     user: {
       "/": [permissions.authenticated],
     },
+    findScheduleMSSQL: {
+      "/": [permissions.authenticated],
+    },
   },
 };

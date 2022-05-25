@@ -42,6 +42,8 @@ const documentRouteRouter = require("./routes/documentRoute.router");
 app.use(`${config.server.urlPrefix}/documentRoute`, documentRouteRouter);
 const userRouter = require("./routes/user.router");
 app.use(`${config.server.urlPrefix}/user`, userRouter);
+const findScheduleMSSQLRouter = require("./routes/findScheduleMSSQL.router");
+app.use(`${config.server.urlPrefix}/findScheduleMSSQL`, findScheduleMSSQLRouter);
 // Запуск сервера
 const startServer = async () => {
   const db = require("./models");

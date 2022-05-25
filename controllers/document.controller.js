@@ -184,7 +184,7 @@ class DocumentController {
         return res.sendStatus(errors.forbidden.code);
       }
       if (!ownerOrHasPermissions(req, document))
-        return res.status(errors.forbidden.code).json({message: "dwqdqw"});
+        return res.status(errors.forbidden.code).json({ message: "dwqdqw" });
       if (req.roles.includes(route.dataValues.permition)) {
         if (document.dataValues.statusId == 3 && req.body.agree) {
           if (document.dataValues.order == 3) {
@@ -206,7 +206,7 @@ class DocumentController {
             await document.update({
               order: orderNext,
               permitionCurrent: routeNext.dataValues.permition,
-              permitionCurrentDesc: routeNext.dataValues.description
+              permitionCurrentDesc: routeNext.dataValues.description,
             });
           } else {
             await document.increment("statusId", { by: 1 });
@@ -257,7 +257,10 @@ class DocumentController {
       }
       if (!ownerOrHasPermissions(req, document))
         return res.sendStatus(errors.forbidden.code);
-      if (req.user.id == document.dataValues.authorPersonalNumber && !req.body.flagUpdateDraft) {
+      if (
+        req.user.id == document.dataValues.authorPersonalNumber &&
+        !req.body.flagUpdateDraft
+      ) {
         await document.update({
           body: req.body.updatedDocument,
           statusId: 3,
@@ -271,7 +274,10 @@ class DocumentController {
           documentType: req.body.documentType,
         });
       }
-      if (req.user.id == document.dataValues.authorPersonalNumber && req.body.flagUpdateDraft) {
+      if (
+        req.user.id == document.dataValues.authorPersonalNumber &&
+        req.body.flagUpdateDraft
+      ) {
         await document.update({
           body: req.body.updatedDocument,
           permitionCurrent: route.dataValues.permition,
