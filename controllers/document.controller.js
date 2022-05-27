@@ -1,6 +1,6 @@
 const db = require("../models");
 const dbMSSQL = require("../modelsMSSQL");
-const { Document, DocumentRoute, RouteCoordination, Sequelize } = db;
+const { Document, DocumentRoute, DocumentType, Sequelize } = db;
 const { ValidationError, Op } = Sequelize;
 const errors = require("../utils/errors");
 const {
@@ -102,9 +102,18 @@ class DocumentController {
       if (!route) {
         return res.sendStatus(errors.notFound.code);
       }
+      const type = await DocumentType.findOne({
+        where: {
+          id: req.body.documentType,
+        },
+      });
+      if (!type) {
+        return res.sendStatus(errors.notFound.code);
+      }
       const document = await Document.create({
         body: req.body.body,
-        documentType: req.body.documentType,
+        documentType:type.dataValues.id,
+        documentTypeDescription: type.dataValues.description, 
         authorPersonalNumber: req.user.id,
         authorFullname: req.user.fullname,
         dateApplication: req.body.dateApplication,
@@ -137,9 +146,18 @@ class DocumentController {
       if (!route) {
         return res.sendStatus(errors.notFound.code);
       }
+      const type = await DocumentType.findOne({
+        where: {
+          id: req.body.documentType,
+        },
+      });
+      if (!type) {
+        return res.sendStatus(errors.notFound.code);
+      }
       const document = await Document.create({
         body: req.body.body,
-        documentType: req.body.documentType,
+        documentType:type.dataValues.id,
+        documentTypeDescription: type.dataValues.description, 
         authorPersonalNumber: req.user.id,
         authorFullname: req.user.fullname,
         dateApplication: req.body.dateApplication,

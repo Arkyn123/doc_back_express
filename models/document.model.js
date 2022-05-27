@@ -44,6 +44,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(256),
         allowNull: false,
       },
+      documentTypeDescription: {
+        type: DataTypes.STRING(256),
+        allowNull: false,
+      },
       users: {
         type: DataTypes.ARRAY(DataTypes.JSON),
         defaultValue: () => [],
