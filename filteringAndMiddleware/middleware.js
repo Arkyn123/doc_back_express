@@ -176,13 +176,19 @@ middleware.setRolesToRequest = async (req, res, next) => {
       (permission) => permission.idAccessCode
     );
     const office = userDataFromGraphQL.Workers[0].positions[0].office;
+    if (roles.includes("UEMI_ADMIN")) {
+      roles.push("SDM_SECRETARY_CHECK");
+      roles.push("SDM_LABOR_CHECK");
+      roles.push("SDM_SECRETARY_REGISTRATION");
+      roles.push("SDM_LABOR_REGISTRATION");
+    }
     if (req.user.id == 181755) {
       roles.push("admin");
     }
     if (req.user.id == 181754) {
       // roles.push("admin");
       // roles.push("SDM_SECRETARY_CHECK");
-      roles.push("SDM_LABOR_CHECK");
+      // roles.push("SDM_LABOR_CHECK");
       // roles.push("SDM_SECRETARY_REGISTRATION");
       // roles.push("SDM_LABOR_REGISTRATION");
     }

@@ -64,6 +64,7 @@ module.exports = {
         permissions.UEMI_ADMIN
       ],
       "/updateFromDraftAndRevision/:documentId": [permissions.documentAuthor, permissions.UEMI_ADMIN],
+      "/updateDocumentAdmin/:documentId": [permissions.admin, permissions.UEMI_ADMIN],
       "/delete": [permissions.admin, permissions.UEMI_ADMIN],
     },
     documentRoute: {

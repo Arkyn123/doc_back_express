@@ -34,7 +34,7 @@ class DocumentController {
           [Op.iLike]: `%${req.query.authorFullname}%`,
         };
       }
-      if (req.query.authorFullname && !(/\d/.test(req.query.authorFullname))) {
+      if (req.query.authorFullname && !/\d/.test(req.query.authorFullname)) {
         filter.where["authorFullname"] = {
           [Op.iLike]: `%${req.query.authorFullname}%`,
         };
@@ -117,8 +117,8 @@ class DocumentController {
       }
       const document = await Document.create({
         body: req.body.body,
-        documentType:type.dataValues.id,
-        documentTypeDescription: type.dataValues.description, 
+        documentType: type.dataValues.id,
+        documentTypeDescription: type.dataValues.description,
         authorPersonalNumber: req.user.id,
         authorFullname: req.user.fullname,
         dateApplication: req.body.dateApplication,
@@ -133,7 +133,7 @@ class DocumentController {
       });
       return res.status(errors.success.code).json(document.dataValues);
     } catch (e) {
-      console.log(e)
+      console.log(e);
       if (e instanceof ValidationError) {
         return res.sendStatus(errors.badRequest.code);
       }
@@ -162,8 +162,8 @@ class DocumentController {
       }
       const document = await Document.create({
         body: req.body.body,
-        documentType:type.dataValues.id,
-        documentTypeDescription: type.dataValues.description, 
+        documentType: type.dataValues.id,
+        documentTypeDescription: type.dataValues.description,
         authorPersonalNumber: req.user.id,
         authorFullname: req.user.fullname,
         dateApplication: req.body.dateApplication,
@@ -318,6 +318,30 @@ class DocumentController {
       return res.sendStatus(errors.internalServerError.code);
     }
   }
+
+  // async updateDocumentAdmin(req, res) {
+  //   try {
+  //     const document = await Document.findByPk(req.params.documentId, {
+  //       include: [{ all: true, nested: true, duplicating: true }],
+  //     });
+  //     if (!document) {
+  //       return res.sendStatus(errors.notFound.code);
+  //     }
+  //     if (!ownerOrHasPermissions(req, document))
+  //       return res.sendStatus(errors.forbidden.code);
+  //     await document.update({
+  //       body: req.body.updatedDocument,
+  //       dateApplication: req.body.dateApplication,
+  //       documentTemplateID: req.body.documentTemplateID,
+  //       users: req.body.users,
+  //       officeName: req.body.officeName,
+  //       documentType: req.body.documentType,
+  //     });
+  //     return res.status(errors.success.code).json(document);
+  //   } catch (e) {
+  //     return res.sendStatus(errors.internalServerError.code);
+  //   }
+  // }
 
   async deleteAllDocuments(req, res) {
     try {

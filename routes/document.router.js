@@ -10,6 +10,7 @@ router.post("/add", permissions, controller.addNewDocument);
 router.post("/addInDraft", permissions, controller.addNewDocumentInDraft);
 router.put('/update/:documentId', permissions, controller.updateDocumentByDocumentId)
 router.put('/updateFromDraftAndRevision/:documentId', permissions, controller.updateDocumentFromDraftAndRevisionByDocumentId)
+// router.put('/updateDocumentAdmin/:documentId', permissions, controller.updateDocumentAdmin)
 router.delete('/delete', permissions, controller.deleteAllDocuments)
 
 module.exports = router;
