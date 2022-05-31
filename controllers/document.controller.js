@@ -29,7 +29,12 @@ class DocumentController {
           [Op.iLike]: `%${req.query.fullname}%`,
         };
       }
-      if (req.query.authorFullname) {
+      if (req.query.authorFullname && /\d/.test(req.query.authorFullname)) {
+        filter.where["registrationNumber"] = {
+          [Op.iLike]: `%${req.query.authorFullname}%`,
+        };
+      }
+      if (req.query.authorFullname && !(/\d/.test(req.query.authorFullname))) {
         filter.where["authorFullname"] = {
           [Op.iLike]: `%${req.query.authorFullname}%`,
         };
@@ -128,6 +133,7 @@ class DocumentController {
       });
       return res.status(errors.success.code).json(document.dataValues);
     } catch (e) {
+      console.log(e)
       if (e instanceof ValidationError) {
         return res.sendStatus(errors.badRequest.code);
       }
