@@ -143,6 +143,7 @@ class DocumentController {
 
   async addNewDocumentInDraft(req, res) {
     try {
+      console.log(req.body);
       const route = await DocumentRoute.findOne({
         where: {
           orderId: 1,
@@ -173,10 +174,9 @@ class DocumentController {
         permitionCurrentDesc: route.dataValues.description,
         documentTemplateID: req.body.documentTemplateID,
         users: req.body.users,
-        usernames:
-          req.body.users[0] != null
-            ? req.body.users.map((u) => u.fullname).join()
-            : "",
+        usernames: req.body.users
+          ? req.body.users.map((u) => u.fullname).join(' ')
+          : "",
         officeName: req.body.officeName,
       });
       return res.status(errors.success.code).json(document.dataValues);
