@@ -62,6 +62,22 @@ module.exports = (sequelize, DataTypes) => {
       dateApplication: {
         type: DataTypes.DATE,
       },
+      deletedDate: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      flagDeleted: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+      },
+      deletedAuthorFullname: {
+        type: DataTypes.STRING(256),
+        allowNull: true,
+      },
+      deletedAuthorPersonalNumber: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
     },
     {
       freezeTableName: true,

@@ -72,10 +72,12 @@ const startServer = async () => {
         fetch(config.services.templater)//
           .then((res) => res.json())
           .then((templates) => {
+            console.log(templates)
             templates = templates.filter((a, i) => templates.findIndex((s) => a.name === s.name) === i)
             db["DocumentType"].bulkCreate(
               templates.map((template) => ({
                 id: template.name,
+
               }))
             );
             db["DocumentRoute"].bulkCreate(

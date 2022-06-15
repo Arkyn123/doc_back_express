@@ -19,6 +19,9 @@ class DocumentController {
       } else {
         filter.where = { ...filter.where };
       }
+      filter.where["flagDeleted"] = {
+        [Op.eq]: null
+      }
       if (req.query.officeName) {
         filter.where["officeName"] = {
           [Op.iLike]: `%${req.query.officeName}%`,
@@ -143,7 +146,6 @@ class DocumentController {
 
   async addNewDocumentInDraft(req, res) {
     try {
-      console.log(req.body);
       const route = await DocumentRoute.findOne({
         where: {
           orderId: 1,
@@ -319,29 +321,27 @@ class DocumentController {
     }
   }
 
-  // async updateDocumentAdmin(req, res) {
-  //   try {
-  //     const document = await Document.findByPk(req.params.documentId, {
-  //       include: [{ all: true, nested: true, duplicating: true }],
-  //     });
-  //     if (!document) {
-  //       return res.sendStatus(errors.notFound.code);
-  //     }
-  //     if (!ownerOrHasPermissions(req, document))
-  //       return res.sendStatus(errors.forbidden.code);
-  //     await document.update({
-  //       body: req.body.updatedDocument,
-  //       dateApplication: req.body.dateApplication,
-  //       documentTemplateID: req.body.documentTemplateID,
-  //       users: req.body.users,
-  //       officeName: req.body.officeName,
-  //       documentType: req.body.documentType,
-  //     });
-  //     return res.status(errors.success.code).json(document);
-  //   } catch (e) {
-  //     return res.sendStatus(errors.internalServerError.code);
-  //   }
-  // }
+  async updateDocumentFlagDeleted(req, res) {
+    try {
+      const document = await Document.findByPk(req.params.documentId, {
+        include: [{ all: true, nested: true, duplicating: true }],
+      });
+      if (!document) {
+        return res.sendStatus(errors.notFound.code);
+      }
+      if (!ownerOrHasPermissions(req, document))
+        return res.sendStatus(errors.forbidden.code);
+      await document.update({
+        deletedDate: Date.now(),
+        flagDeleted: true,
+        deletedAuthorFullname: req.body.deletedAuthorFullname,
+        deletedAuthorPersonalNumber: req.body.deletedAuthorPersonalNumber
+      });
+      return res.status(errors.success.code).json(document);
+    } catch (e) {
+      return res.sendStatus(errors.internalServerError.code);
+    }
+  }
 
   async deleteAllDocuments(req, res) {
     try {
