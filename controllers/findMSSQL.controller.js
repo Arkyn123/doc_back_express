@@ -24,21 +24,20 @@ class FindScheduleMSSQLController {
       return res.sendStatus(errors.internalServerError.code);
     }
   }
-//   async getAllBrigada(req, res) {
-//     try {
-//       console.log(req.query.position);
-//       const [results, metadata] = await sequelizeMSSQL.query(`SELECT distinct 
-//       [SCHEDULE],
-//       [BRIGADA],
-//       b.NAME
-//       from [T_XXHR_WORKER_INFORMATION] a join [T_XXHR_WORK_SCHEDULES] b on a.SCHEDULE=b.CODE      
-// `);
-//       console.log(results, metadata);
-//       return res.status(errors.success.code).json(results);
-//     } catch (e) {
-//       console.log(e);
-//       return res.sendStatus(errors.internalServerError.code);
-//     }
-//   }
+  async getAllBrigada(req, res) {
+    try {
+      const [results, metadata] = await sequelizeMSSQL.query(`SELECT distinct 
+      [SCHEDULE],
+      [BRIGADA],
+      b.NAME
+      from [T_XXHR_WORKER_INFORMATION] a join [T_XXHR_WORK_SCHEDULES] b on a.SCHEDULE=b.CODE
+      where BRIGADA like '%${req.query.brigada}%'    
+`);
+      return res.status(errors.success.code).json(results);
+    } catch (e) {
+      console.log(e);
+      return res.sendStatus(errors.internalServerError.code);
+    }
+  }
 }
 module.exports = new FindScheduleMSSQLController();

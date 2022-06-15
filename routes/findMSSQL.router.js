@@ -2,8 +2,8 @@ const Router = require("express").Router;
 const router = new Router();
 const setFilterFromClient = require('../filteringAndMiddleware/sequelizeFiltering')
 const { permissions } = require('../filteringAndMiddleware/middleware')
-const controller = require("../controllers/findScheduleMSSQL.controller");
+const controller = require("../controllers/findMSSQL.controller");
 
-router.get("/", permissions, controller.getAllSchedule);
-
+router.get("/schedule", permissions, controller.getAllSchedule);
+router.get("/brigada", permissions, controller.getAllBrigada);
 module.exports = router;
