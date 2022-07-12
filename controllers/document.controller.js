@@ -42,11 +42,13 @@ class DocumentController {
           [Op.iLike]: `%${req.query.authorFullname}%`,
         };
       }
-      
       if (req.query.myDocumentsFlag && req.query.myDocumentsFlag == "true") {
-        filter.where["officeName"] = {
-          [Op.eq]: req.user.officeName,
+        const ids = req.roles.map(r => r.idOffice)
+        ids.push(req.user.officeId)
+        filter.where["officeId"] = {
+          [Op.in]: ids,
         };
+        
         filter.where["permitionCurrent"] = {
           [Op.in]: req.roles.map(r => r.idAccessCode),
         };
