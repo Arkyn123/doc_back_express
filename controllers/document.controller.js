@@ -42,12 +42,13 @@ class DocumentController {
           [Op.iLike]: `%${req.query.authorFullname}%`,
         };
       }
+      
       if (req.query.myDocumentsFlag && req.query.myDocumentsFlag == "true") {
         filter.where["officeName"] = {
           [Op.eq]: req.user.officeName,
         };
         filter.where["permitionCurrent"] = {
-          [Op.in]: req.roles,
+          [Op.in]: req.roles.map(r => r.idAccessCode),
         };
       }
       if (req.query.modelDate) {
