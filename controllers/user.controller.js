@@ -1,15 +1,13 @@
-const errors = require('../utils/errors')
+const errors = require("../utils/errors");
 
 class UserController {
-    async getUser(req, res) {
-        return res
-        .status(errors.success.code)
-        .json({
-            user: req.user,
-            roles: req.roles,
-            officeId: req.officeId
-        })
-    }
+  async getUser(req, res) {
+    return res.status(errors.success.code).json({
+      user: req.user,
+      roles: req.roles,
+      officeId: req.officeId,
+    });
+  }
 }
 
-module.exports = new UserController()
+module.exports = new UserController();

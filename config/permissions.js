@@ -10,18 +10,22 @@ const permissions = {
   // },
   SDM_Secretary_Check: {
     role: "SDM_SECRETARY_CHECK",
+    officeCheck: true,
     field: { officeName: "officeName" },
   },
   SDM_Labor_Check: {
     role: "SDM_LABOR_CHECK",
+    officeCheck: true,
     field: { officeName: "officeName" },
   },
   SDM_Secretary_Registration: {
     role: "SDM_SECRETARY_REGISTRATION",
+    officeCheck: true,
     field: { officeName: "officeName" },
   },
   SDM_Labor_Registration: {
     role: "SDM_LABOR_REGISTRATION",
+    officeCheck: true,
     field: { officeName: "officeName" },
   },
   owner: {
@@ -61,9 +65,12 @@ module.exports = {
         permissions.SDM_Labor_Check,
         permissions.SDM_Secretary_Registration,
         permissions.SDM_Labor_Registration,
-        permissions.UEMI_ADMIN
+        permissions.UEMI_ADMIN,
       ],
-      "/updateFromDraftAndRevision/:documentId": [permissions.documentAuthor, permissions.UEMI_ADMIN],
+      "/updateFromDraftAndRevision/:documentId": [
+        permissions.documentAuthor,
+        permissions.UEMI_ADMIN,
+      ],
       "/updateDocumentFlagDeleted/:documentId": [permissions.documentAuthor],
       "/delete": [permissions.admin, permissions.UEMI_ADMIN],
     },

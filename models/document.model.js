@@ -78,6 +78,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
+      officeId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
     },
     {
       freezeTableName: true,

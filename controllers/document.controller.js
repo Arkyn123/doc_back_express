@@ -180,6 +180,7 @@ class DocumentController {
           ? req.body.users.map((u) => u.fullname).join(' ')
           : "",
         officeName: req.body.officeName,
+        officeId: req.body.officeId,
       });
       return res.status(errors.success.code).json(document.dataValues);
     } catch (e) {
@@ -210,8 +211,8 @@ class DocumentController {
         return res.sendStatus(errors.forbidden.code);
       }
       if (!ownerOrHasPermissions(req, document))
-        return res.status(errors.forbidden.code).json({ message: "dwqdqw" });
-      if (req.roles.includes(route.dataValues.permition)) {
+        return res.status(errors.forbidden.code).json({ message: "Нет прав" });
+      if (req.roles.map(r => r.idAccessCode).includes(route.dataValues.permition)) {
         if (document.dataValues.statusId == 3 && req.body.agree) {
           if (document.dataValues.order == 3) {
             await document.update({
@@ -257,6 +258,7 @@ class DocumentController {
         }
         return res.status(errors.success.code).json(document);
       }
+      console.warn(456)
       return res.sendStatus(errors.forbidden.code);
     } catch (e) {
       console.log(e);
@@ -297,6 +299,7 @@ class DocumentController {
           documentTemplateID: req.body.documentTemplateID,
           users: req.body.users,
           officeName: req.body.officeName,
+          officeId: req.body.officeId,
           documentType: req.body.documentType,
         });
       }
@@ -312,6 +315,7 @@ class DocumentController {
           documentTemplateID: req.body.documentTemplateID,
           users: req.body.users,
           officeName: req.body.officeName,
+          officeId: req.body.officeId,
           documentType: req.body.documentType,
         });
       }

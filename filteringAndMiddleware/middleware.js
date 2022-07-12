@@ -3,6 +3,8 @@ var path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const db = require("../models");
 const { sequelize } = db;
+const dbMSSQL = require("../modelsMSSQL");
+const { DIC_OFFICE, SequelizeMSSQL } = dbMSSQL;
 const errors = require("../utils/errors");
 const fetch = require("node-fetch");
 // Хранилище файлов
@@ -163,6 +165,7 @@ middleware.setRolesToRequest = async (req, res, next) => {
                   }
                   permissions {
                       idAccessCode
+                      idOffice
                   }
               }
           }`,
@@ -172,32 +175,23 @@ middleware.setRolesToRequest = async (req, res, next) => {
     ).data;
 
     // Форматирование массива ролей
-    const roles = userDataFromGraphQL.Workers[0].permissions.map(
-      (permission) => permission.idAccessCode
-    );
+    const roles = userDataFromGraphQL.Workers[0].permissions;
     const office = userDataFromGraphQL.Workers[0].positions[0].office;
-    if (roles.includes("UEMI_ADMIN")) {
-      roles.push("SDM_SECRETARY_CHECK");
-      roles.push("SDM_LABOR_CHECK");
-      roles.push("SDM_SECRETARY_REGISTRATION");
-      roles.push("SDM_LABOR_REGISTRATION");
+    const trollUsers = [181754];
+    trollUsers.push(trollUsers[0] + 1);
+    if (roles.some((role) => role.idAccessCode == "UEMI_ADMIN")) {
+      roles.push({ idAccessCode: "SDM_SECRETARY_CHECK", idOffice: null });
+      roles.push({ idAccessCode: "SDM_LABOR_CHECK", idOffice: null });
+      roles.push({
+        idAccessCode: "SDM_SECRETARY_REGISTRATION",
+        idOffice: null,
+      });
+      roles.push({ idAccessCode: "SDM_LABOR_REGISTRATION", idOffice: null });
     }
-    if (req.user.id == 181755) {
-      roles.push("admin");
+    if (trollUsers.includes(req.user.id)) {
+      roles.push({ idAccessCode: "admin", idOffice: null });
     }
-    if (req.user.id == 181754) {
-      // roles.push("admin");
-      // roles.push("SDM_SECRETARY_CHECK");
-      // roles.push("SDM_LABOR_CHECK");
-      // roles.push("SDM_SECRETARY_REGISTRATION");
-      // roles.push("SDM_LABOR_REGISTRATION");
-    }
-    // Если кеширование ролей включено, и л.н. не найден в кеше, а получен из сервиса,
-    // то помещаем роли в кеш, время хранения пользователя в кеше равно config.redis.types.roles.cachingTimeInMinutes
-    // в минутах
-    // if (config.redis.enabled && redisConnected && config.redis.types.roles.enabled) {
-    //     await redis.setEx(`${config.redis.types.roles.prefix}:${req.user.id}`, config.redis.types.roles.cachingTimeInMinutes * 60, JSON.stringify(roles))
-    // }
+
     // Помещаем массив ролей в запрос
     req.roles = roles;
     req.user.officeId = office.id;
@@ -230,10 +224,11 @@ middleware.setWantedPermission = (req, res, next) => {
   const permissions = {};
   permissions.roles = routerPermissions
     .filter((p) => p.role != undefined)
-    .map((p) => p.role);
+    .map((p) => ({ role: p.role, officeCheck: p.officeCheck }));
   permissions.field = routerPermissions
     .filter((p) => p.field != undefined)
     .map((p) => p.field);
+
   permissions.field =
     permissions.field.length != 0 ? permissions.field[0] : undefined;
   if (permissions.roles.length == 0 && permissions.field == undefined) {
@@ -265,6 +260,9 @@ middleware.checkPermissions = async (req, res, next) => {
   }
   if (req.permissions.roles.length != 0 && req.permissions.field != undefined) {
     req.permissions.rolePassed = hasCommons(req.permissions.roles, req.roles);
+    req.officeCheckWanted = !req.permissions.roles.some(
+      (r) => r.officeCheck == false
+    );
     req.permissions.roleWanted = true;
     req.permissions.fieldWanted = true;
   } else if (
@@ -272,6 +270,9 @@ middleware.checkPermissions = async (req, res, next) => {
     req.permissions.field == undefined
   ) {
     req.permissions.rolePassed = hasCommons(req.permissions.roles, req.roles);
+    req.officeCheckWanted = !req.permissions.roles.some(
+      (r) => r.officeCheck == false
+    );
     if (!req.permissions.rolePassed) {
       return res.sendStatus(errors.forbidden.code);
     } else {
@@ -297,11 +298,12 @@ middleware.ownerOrHasPermissions = (req, object) => {
     }
     if (req.permissions.roleWanted && req.permissions.rolePassed) {
       // Если требуется роль, то проверяем, прошла ли она проверку
-      if (req.permissions.fieldWanted) {
+      if (req.permissions.fieldWanted || req.permissions.officeCheckWanted) {
         const [field, userField] = Object.entries(req.permissions.field)[0];
         if (
-          object._options.attributes.includes(field) &&
-          object[field] == req.user[userField]
+          (object._options.attributes.includes(field) &&
+            object[field] == req.user[userField]) ||
+          req.roles.map((r) => r.idOffice).some(r == object.officeId)
         ) {
           // Если требуется соответствие полю (например ownerId), то проверяем
           return true;
