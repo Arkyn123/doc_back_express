@@ -15,6 +15,12 @@ module.exports = (sequelize, DataTypes) => {
       message: {
         type: DataTypes.STRING(256),
       },
+      messageUserId: {
+        type: DataTypes.INTEGER,
+      },
+      messageUserFullname: {
+        type: DataTypes.STRING(256),
+      },
       order: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -89,6 +95,11 @@ module.exports = (sequelize, DataTypes) => {
   );
   Document.associate = function (models) {
     Document.belongsTo(models.DocumentStatus, { as: "status" });
+    Document.hasMany(models.DocumentOrderLog, {
+      onDelete: "CASCADE",
+      foreignKey: "documentId",
+      as: "documentOrderLog",
+    });
     // Document.belongsTo(models.DocumentType, { as: "documentType" , keyType: DataTypes.STRING(256)});
   };
   return Document;

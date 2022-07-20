@@ -1,6 +1,7 @@
 const db = require("../models");
 const dbMSSQL = require("../modelsMSSQL");
-const { Document, DocumentRoute, DocumentType, Sequelize } = db;
+const { Document, DocumentRoute, DocumentType, DocumentOrderLog, Sequelize } =
+  db;
 const { ValidationError, Op } = Sequelize;
 const errors = require("../utils/errors");
 const {
@@ -20,8 +21,8 @@ class DocumentController {
         filter.where = { ...filter.where };
       }
       filter.where["flagDeleted"] = {
-        [Op.eq]: null
-      }
+        [Op.eq]: null,
+      };
       if (req.query.officeName) {
         filter.where["officeName"] = {
           [Op.iLike]: `%${req.query.officeName}%`,
@@ -43,14 +44,14 @@ class DocumentController {
         };
       }
       if (req.query.myDocumentsFlag && req.query.myDocumentsFlag == "true") {
-        const ids = req.roles.map(r => r.idOffice)
-        ids.push(req.user.officeId)
+        const ids = req.roles.map((r) => r.idOffice);
+        ids.push(req.user.officeId);
         filter.where["officeId"] = {
           [Op.in]: ids,
         };
-        
+
         filter.where["permitionCurrent"] = {
-          [Op.in]: req.roles.map(r => r.idAccessCode),
+          [Op.in]: req.roles.map((r) => r.idAccessCode),
         };
       }
       if (req.query.modelDate) {
@@ -180,10 +181,17 @@ class DocumentController {
         documentTemplateID: req.body.documentTemplateID,
         users: req.body.users,
         usernames: req.body.users
-          ? req.body.users.map((u) => u.fullname).join(' ')
+          ? req.body.users.map((u) => u.fullname).join(" ")
           : "",
         officeName: req.body.officeName,
         officeId: req.body.officeId,
+      });
+      await DocumentOrderLog.create({
+        documentId: document.dataValues.id,
+        order: document.dataValues.order,
+        statusDescription: "Черновик",
+        personalNumber: req.user.id,
+        fullname: req.user.fullname,
       });
       return res.status(errors.success.code).json(document.dataValues);
     } catch (e) {
@@ -215,7 +223,11 @@ class DocumentController {
       }
       if (!ownerOrHasPermissions(req, document))
         return res.status(errors.forbidden.code).json({ message: "Нет прав" });
-      if (req.roles.map(r => r.idAccessCode).includes(route.dataValues.permition)) {
+      if (
+        req.roles
+          .map((r) => r.idAccessCode)
+          .includes(route.dataValues.permition)
+      ) {
         if (document.dataValues.statusId == 3 && req.body.agree) {
           if (document.dataValues.order == 3) {
             await document.update({
@@ -257,11 +269,26 @@ class DocumentController {
             permitionCurrent: routeNext.dataValues.permition,
             permitionCurrentDesc: routeNext.dataValues.description,
             message: req.body.message,
+            messageUserId: req.user.id,
+            messageUserFullname: req.user.fullname,
           });
         }
+        //для обновления статуса
+        const documentNew = await Document.findByPk(req.params.documentId, {
+          include: [{ all: true, nested: true, duplicating: true }],
+        });
+        await DocumentOrderLog.create({
+          documentId: documentNew.dataValues.id,
+          order: documentNew.dataValues.order,
+          statusDescription:
+            documentNew.dataValues.status.dataValues.description,
+          personalNumber: req.user.id,
+          fullname: req.user.fullname,
+          message: req.body.message,
+          registrationNumber: req.body.registrationNumber,
+        });
         return res.status(errors.success.code).json(document);
       }
-      console.warn(456)
       return res.sendStatus(errors.forbidden.code);
     } catch (e) {
       console.log(e);
@@ -305,12 +332,23 @@ class DocumentController {
           officeId: req.body.officeId,
           documentType: req.body.documentType,
         });
+        const documentUpdated = await Document.findByPk(req.params.documentId, {
+          include: [{ all: true, nested: true, duplicating: true }],
+        });
+        await DocumentOrderLog.create({
+          documentId: documentUpdated.dataValues.id,
+          order: documentUpdated.dataValues.order,
+          statusDescription:
+            documentUpdated.dataValues.status.dataValues.description,
+          personalNumber: req.user.id,
+          fullname: req.user.fullname,
+        });
       }
       if (
         req.user.id == document.dataValues.authorPersonalNumber &&
         req.body.flagUpdateDraft
       ) {
-        await document.update({
+        const document = await document.update({
           body: req.body.updatedDocument,
           permitionCurrent: route.dataValues.permition,
           permitionCurrentDesc: route.dataValues.description,
@@ -324,6 +362,7 @@ class DocumentController {
       }
       return res.status(errors.success.code).json(document);
     } catch (e) {
+      console.log(e);
       return res.sendStatus(errors.internalServerError.code);
     }
   }
@@ -342,7 +381,7 @@ class DocumentController {
         deletedDate: Date.now(),
         flagDeleted: true,
         deletedAuthorFullname: req.body.deletedAuthorFullname,
-        deletedAuthorPersonalNumber: req.body.deletedAuthorPersonalNumber
+        deletedAuthorPersonalNumber: req.body.deletedAuthorPersonalNumber,
       });
       return res.status(errors.success.code).json(document);
     } catch (e) {
