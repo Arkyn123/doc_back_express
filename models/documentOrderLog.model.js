@@ -16,6 +16,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      orderDescription: {
+        type: DataTypes.STRING(512),
+        allowNull: false,
+      },
       statusDescription: {
         type: DataTypes.STRING(512),
         allowNull: false,

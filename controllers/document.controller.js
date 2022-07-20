@@ -186,9 +186,16 @@ class DocumentController {
         officeName: req.body.officeName,
         officeId: req.body.officeId,
       });
+      const routeNext = await DocumentRoute.findOne({
+        where: {
+          orderId: 1,
+          documentType: document.dataValues.documentType,
+        },
+      });
       await DocumentOrderLog.create({
         documentId: document.dataValues.id,
         order: document.dataValues.order,
+        orderDescription: routeNext.dataValues.description,
         statusDescription: "Черновик",
         personalNumber: req.user.id,
         fullname: req.user.fullname,
@@ -236,7 +243,7 @@ class DocumentController {
           }
           if (document.dataValues.order < 4) {
             const orderNext = document.dataValues.order + 1;
-            const routeNext = await DocumentRoute.findOne({
+            var routeNext = await DocumentRoute.findOne({
               where: {
                 orderId: orderNext,
                 documentType: document.dataValues.documentType,
@@ -252,9 +259,15 @@ class DocumentController {
             });
           } else {
             await document.increment("statusId", { by: 1 });
+            var routeNext = await DocumentRoute.findOne({
+              where: {
+                orderId: 4,
+                documentType: document.dataValues.documentType,
+              },
+            });
           }
         } else if (document.dataValues.statusId == 3 && !req.body.agree) {
-          const routeNext = await DocumentRoute.findOne({
+          var routeNext = await DocumentRoute.findOne({
             where: {
               orderId: 1,
               documentType: document.dataValues.documentType,
@@ -280,6 +293,7 @@ class DocumentController {
         await DocumentOrderLog.create({
           documentId: documentNew.dataValues.id,
           order: documentNew.dataValues.order,
+          orderDescription: routeNext.dataValues.description,
           statusDescription:
             documentNew.dataValues.status.dataValues.description,
           personalNumber: req.user.id,
@@ -335,9 +349,16 @@ class DocumentController {
         const documentUpdated = await Document.findByPk(req.params.documentId, {
           include: [{ all: true, nested: true, duplicating: true }],
         });
+        const routeNext = await DocumentRoute.findOne({
+          where: {
+            orderId: 1,
+            documentType: document.dataValues.documentType,
+          },
+        });
         await DocumentOrderLog.create({
           documentId: documentUpdated.dataValues.id,
           order: documentUpdated.dataValues.order,
+          orderDescription: routeNext.dataValues.description,
           statusDescription:
             documentUpdated.dataValues.status.dataValues.description,
           personalNumber: req.user.id,
