@@ -248,7 +248,7 @@ middleware.setWantedPermission = (req, res, next) => {
 const hasCommons = (array1, array2) => {
   for (const el1 of array1) {
     for (const el2 of array2) {
-      if (el1 == el2) return true;
+      if (el1.role == el2.idAccessCode) return true;
     }
   }
   return false;
@@ -290,6 +290,7 @@ middleware.checkPermissions = async (req, res, next) => {
 };
 
 middleware.ownerOrHasPermissions = (req, object) => {
+
   if (req.permissions.authenticated) {
     // Если требуется авторизация
     if (!req.permissions.roleWanted && !req.permissions.fieldWanted) {
@@ -303,8 +304,9 @@ middleware.ownerOrHasPermissions = (req, object) => {
         if (
           (object._options.attributes.includes(field) &&
             object[field] == req.user[userField]) ||
-          req.roles.map((r) => r.idOffice).some(r == object.officeId)
+          req.roles.map((r) => r.idOffice).some(r => r == object.officeId)
         ) {
+       
           // Если требуется соответствие полю (например ownerId), то проверяем
           return true;
         }
@@ -329,7 +331,7 @@ middleware.ownerOrHasPermissions = (req, object) => {
         // Если объект не содержит искомого поля
         return true;
       }
-    }
+    }  
     return false;
   } else {
     // Если авторизация не требуется
