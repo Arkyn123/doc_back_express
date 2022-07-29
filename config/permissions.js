@@ -71,6 +71,13 @@ module.exports = {
         permissions.documentAuthor,
         permissions.UEMI_ADMIN,
       ],
+      "/updateInfoForRole/:documentId": [
+        permissions.SDM_Secretary_Check,
+        permissions.SDM_Labor_Check,
+        permissions.SDM_Secretary_Registration,
+        permissions.SDM_Labor_Registration,
+        permissions.UEMI_ADMIN,
+      ],
       "/updateDocumentFlagDeleted/:documentId": [permissions.documentAuthor],
       "/delete": [permissions.admin, permissions.UEMI_ADMIN],
     },
