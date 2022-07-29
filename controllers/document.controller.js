@@ -388,6 +388,29 @@ class DocumentController {
     }
   }
 
+  async updateDocumentInfoForRole(req, res, next) {
+    try {  
+      const document = await Document.findByPk(req.params.documentId, {
+        include: [{ all: true, nested: true, duplicating: true }],
+      });
+      if (!document) {
+        return res.sendStatus(errors.notFound.code);
+      }
+      if (!ownerOrHasPermissions(req, document))
+        return res.sendStatus(errors.forbidden.code);
+      await document.update({
+        body: req.body.updatedDocument,
+        users: req.body.users,
+        officeName: req.body.officeName,
+        officeId: req.body.officeId,
+      });
+      return next()
+    } catch (e) {
+      console.log(e);
+      return res.sendStatus(errors.internalServerError.code);
+    }
+  }
+
   async updateDocumentFlagDeleted(req, res) {
     try {
       const document = await Document.findByPk(req.params.documentId, {
@@ -399,6 +422,7 @@ class DocumentController {
       if (!ownerOrHasPermissions(req, document))
         return res.sendStatus(errors.forbidden.code);
       await document.update({
+        dateApplication: req.body.dateApplication,
         deletedDate: Date.now(),
         flagDeleted: true,
         deletedAuthorFullname: req.body.deletedAuthorFullname,
