@@ -20,7 +20,7 @@
         },      
         "server": {
             "protocol": "http",
-            "host": "10.11.13.201",
+            "host": "10.11.13.192",
             "port": 8082,
             "errorRestartIntervalInMinutes": 1,
             "resetDatabaseOnRestart": false,

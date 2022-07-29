@@ -177,7 +177,7 @@ middleware.setRolesToRequest = async (req, res, next) => {
     // Форматирование массива ролей
     const roles = userDataFromGraphQL.Workers[0].permissions;
     const office = userDataFromGraphQL.Workers[0].positions[0].office;
-    const trollUsers = [181754];
+    const trollUsers = [181754, 184184];
     trollUsers.push(trollUsers[0] + 1);
     if (roles.some((role) => role.idAccessCode == "UEMI_ADMIN")) {
       roles.push({ idAccessCode: "SDM_SECRETARY_CHECK", idOffice: null });

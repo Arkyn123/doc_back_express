@@ -129,7 +129,7 @@ const startServer = async () => {
     // Перезапуск в случае неудачного подключения к базе данных
     console.log(
       "Server cannot connect to database, restart after ",
-      config.server.errorRestartIntervalInMinutes,
+      config.server.errorRestartIntervalInMinutes, error,
       " minutes"
     );
     setTimeout(
