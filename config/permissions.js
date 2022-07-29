@@ -69,6 +69,7 @@ module.exports = {
       ],
       "/updateFromDraftAndRevision/:documentId": [
         permissions.documentAuthor,
+        permissions.SDM_Secretary_Check,
         permissions.UEMI_ADMIN,
       ],
       "/updateInfoForRole/:documentId": [
