@@ -366,10 +366,10 @@ class DocumentController {
         });
       }
       if (
-        req.user.id == document.dataValues.authorPersonalNumber &&
+        // req.user.id == document.dataValues.authorPersonalNumber &&
         req.body.flagUpdateDraft
       ) {
-        const document = await document.update({
+        await document.update({
           body: req.body.updatedDocument,
           permitionCurrent: route.dataValues.permition,
           permitionCurrentDesc: route.dataValues.description,
