@@ -2,9 +2,9 @@
     "development": {
         "database": {
             "username": "postgres",
-            "password": "root",
+            "password": "Pasha007",
             "database": "documents",
-            "host": "10.11.13.201",
+            "host": "localhost",
             "port": 5432,
             "dialect": "postgres",
             "logging": false
