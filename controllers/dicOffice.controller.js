@@ -1,6 +1,6 @@
 const dbMSSQL = require("../modelsMSSQL");
 const { DIC_OFFICE, SequelizeMSSQL } = dbMSSQL;
-const { ValidationError } = SequelizeMSSQL;
+const { Op, ValidationError } = SequelizeMSSQL;
 const errors = require("../utils/errors");
 const {
   RouteCoordinationAssociation,
@@ -15,6 +15,13 @@ class DicOfficeController {
       } else {
         filter.where = { ...filter.where };
       }
+
+      // const idsArray = req.roles.map((r) => r.idOffice && r.idOffice);
+      // if (!req.roles.some((r) => r.idAccessCode == "UEMI_ADMIN")) {
+      //   filter.where["ID"] = {
+      //     [Op.in]: idsArray,
+      //   };
+      // }
       const dic_office = await DIC_OFFICE.findAll({
         ...filter,
         include: [{ all: true, nested: true, duplicating: true }],

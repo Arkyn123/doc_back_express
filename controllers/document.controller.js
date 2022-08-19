@@ -67,7 +67,14 @@ class DocumentController {
           };
         }
       }
-
+      //fgthrthr
+      if (!req.roles.some((r) => r.idAccessCode == "UEMI_ADMIN")) {
+        const idsArray = req.roles.map((r) => r.idOffice && r.idOffice);
+        idsArray.push(req.user.officeId)
+        filter.where["officeId"] = {
+          [Op.in]: idsArray,
+        };
+      }
       // const new_filter = {
       //   [Op.or]: filter,
       // }
