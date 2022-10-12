@@ -20,7 +20,7 @@
         },      
         "server": {
             "protocol": "http",
-            "host": "10.11.13.201",
+            "host": "10.11.13.192",
             "port": 8082,
             "errorRestartIntervalInMinutes": 1,
             "resetDatabaseOnRestart": false,
@@ -30,7 +30,8 @@
         "services": {
             "gatewayDecode": "http://10.11.62.74:3000/decode",
             "users": "http://10.11.62.74:3000/service/users/graphql",
-            "templater": "http://10.11.13.224:8777/api/template"
+            "templater": "http://10.11.13.224:8777/api/template",
+            "mailer": "http://10.11.62.74:3000/mailer/employeeNumber"
         }
     },
     "production": {

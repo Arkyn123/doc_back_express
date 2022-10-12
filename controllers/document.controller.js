@@ -10,7 +10,7 @@ const {
 const {
   ownerOrHasPermissions,
 } = require("../filteringAndMiddleware/middleware");
-
+const fetch = require("node-fetch");
 class DocumentController {
   async getAllDocument(req, res) {
     try {
@@ -70,7 +70,7 @@ class DocumentController {
       //fgthrthr
       if (!req.roles.some((r) => r.idAccessCode == "UEMI_ADMIN")) {
         const idsArray = req.roles.map((r) => r.idOffice && r.idOffice);
-        idsArray.push(req.user.officeId)
+        idsArray.push(req.user.officeId);
         filter.where["officeId"] = {
           [Op.in]: idsArray,
         };
@@ -388,6 +388,60 @@ class DocumentController {
           documentType: req.body.documentType,
         });
       }
+
+      // ПОИСК ЛЮДЕЙ ПО ПРАВУ
+        const userDataFromGraphQL = (
+          await (
+            await fetch(config.services.users, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${req.token}`,
+              },
+              body: JSON.stringify({
+                query: `query {
+                  Workers(idAccessCode: "${document.dataValues.permitionCurrent}") {
+                    employeeNumber permissions {idOffice idAccessCode}
+                  }
+                }`,
+              }),
+            })
+          ).json()
+        ).data;
+       console.log(document.statusId)
+
+        await fetch(config.services.mailer, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${req.token}`,
+        },
+        body: JSON.stringify({
+            "employeeNumber": 184184,
+            "subject": "SDM",
+            "body": `Проект № <strong>12321354354 УПРАЛВЕНИЕ</strong>(какой то комментарий который кто то написал) </strong> согласован <p><a href='http://localhost:8080/documents/#form/3' rel='noopener noreferrer' target='_blank'>SDM создание документа</a></p>`,
+            "isHTML": true,
+           "sendAt": "2022-08-09T09:25:17.321Z"
+        })
+      });
+      // var result = [];
+      // for (let i = 0; i < userDataFromGraphQL.Workers.length; i++) {
+      //   for (
+      //     let j = 0;
+      //     j < userDataFromGraphQL.Workers[i].permissions.length;
+      //     j++
+      //   ) {
+      //     if (
+      //       userDataFromGraphQL.Workers[i].permissions[j].idOffice ==
+      //         document.officeId &&
+      //       userDataFromGraphQL.Workers[i].permissions[j].idAccessCode ==
+      //         document.dataValues.permitionCurrent
+      //     )
+      //       result.push(userDataFromGraphQL.Workers[i].employeeNumber);
+      //   }
+      // }
+      // console.log(result);
+
       return res.status(errors.success.code).json(document);
     } catch (e) {
       console.log(e);
@@ -396,7 +450,7 @@ class DocumentController {
   }
 
   async updateDocumentInfoForRole(req, res, next) {
-    try {  
+    try {
       const document = await Document.findByPk(req.params.documentId, {
         include: [{ all: true, nested: true, duplicating: true }],
       });
@@ -411,7 +465,7 @@ class DocumentController {
         officeName: req.body.officeName,
         officeId: req.body.officeId,
       });
-      return next()
+      return next();
     } catch (e) {
       console.log(e);
       return res.sendStatus(errors.internalServerError.code);
