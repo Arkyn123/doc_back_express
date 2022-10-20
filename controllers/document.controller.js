@@ -390,40 +390,40 @@ class DocumentController {
       }
 
       // ПОИСК ЛЮДЕЙ ПО ПРАВУ
-        const userDataFromGraphQL = (
-          await (
-            await fetch(config.services.users, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${req.token}`,
-              },
-              body: JSON.stringify({
-                query: `query {
-                  Workers(idAccessCode: "${document.dataValues.permitionCurrent}") {
-                    employeeNumber permissions {idOffice idAccessCode}
-                  }
-                }`,
-              }),
-            })
-          ).json()
-        ).data;
-       console.log(document.statusId)
+      //   const userDataFromGraphQL = (
+      //     await (
+      //       await fetch(config.services.users, {
+      //         method: "POST",
+      //         headers: {
+      //           "Content-Type": "application/json",
+      //           Authorization: `Bearer ${req.token}`,
+      //         },
+      //         body: JSON.stringify({
+      //           query: `query {
+      //             Workers(idAccessCode: "${document.dataValues.permitionCurrent}") {
+      //               employeeNumber permissions {idOffice idAccessCode}
+      //             }
+      //           }`,
+      //         }),
+      //       })
+      //     ).json()
+      //   ).data;
+      //  console.log(document.statusId)
 
-        await fetch(config.services.mailer, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${req.token}`,
-        },
-        body: JSON.stringify({
-            "employeeNumber": 184184,
-            "subject": "SDM",
-            "body": `Проект № <strong>12321354354 УПРАЛВЕНИЕ</strong>(какой то комментарий который кто то написал) </strong> согласован <p><a href='http://localhost:8080/documents/#form/3' rel='noopener noreferrer' target='_blank'>SDM создание документа</a></p>`,
-            "isHTML": true,
-           "sendAt": "2022-08-09T09:25:17.321Z"
-        })
-      });
+      //   await fetch(config.services.mailer, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     Authorization: `Bearer ${req.token}`,
+      //   },
+      //   body: JSON.stringify({
+      //       "employeeNumber": 184184,
+      //       "subject": "SDM",
+      //       "body": `Проект № <strong>12321354354 УПРАЛВЕНИЕ</strong>(какой то комментарий который кто то написал) </strong> согласован <p><a href='http://localhost:8080/documents/#form/3' rel='noopener noreferrer' target='_blank'>SDM создание документа</a></p>`,
+      //       "isHTML": true,
+      //      "sendAt": "2022-08-09T09:25:17.321Z"
+      //   })
+      // });
       // var result = [];
       // for (let i = 0; i < userDataFromGraphQL.Workers.length; i++) {
       //   for (

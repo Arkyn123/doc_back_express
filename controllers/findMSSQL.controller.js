@@ -9,16 +9,15 @@ class FindScheduleMSSQLController {
     try {
       const [results, metadata] = await sequelizeMSSQL.query(`SELECT distinct  
       b.[ORG_ID]
-     --,
-	 [ORG_NAME]
+	 ,[ORG_NAME]
      ,[PARENT_ORG_ID]
      ,[PARENT_ORG_NAME]
        ,b.[POSITION_ID]
      ,b.[POSITION_NAME] 
        -- ,*
- FROM [T_XXHR_OSK_POSITIONS] b 
- join [ELR_Orders].[dbo].[T_XXHR_OSK_ASSIGNMENTS_V] a  on a.ORG_ID=b.ORG_ID 
- where b.POSITION_ID like '%${req.query.position}%' or b.POSITION_NAME like '%${req.query.position}%''
+       FROM [ELR_Orders].[dbo].[T_XXHR_OSK_ASSIGNMENTS_V] a join [T_XXHR_OSK_POSITIONS] b on a.ORG_ID=b.ORG_ID
+       where b.POSITION_ID like '%${req.query.position}%' or b.POSITION_NAME like '%${req.query.position}%'
+      
 `);
       return res.status(errors.success.code).json(results);
     } catch (e) {

@@ -2,7 +2,7 @@
     "development": {
         "database": {
             "username": "postgres",
-            "password": "Pasha007",
+            "password": "root",
             "database": "documents",
             "host": "localhost",
             "port": 5432,
@@ -20,7 +20,7 @@
         },      
         "server": {
             "protocol": "http",
-            "host": "10.11.13.192",
+            "host": "10.11.13.201",
             "port": 8082,
             "errorRestartIntervalInMinutes": 1,
             "resetDatabaseOnRestart": false,
