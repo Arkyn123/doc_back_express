@@ -2,7 +2,7 @@
     "development": {
         "database": {
             "username": "postgres",
-            "password": "root",
+            "password": "Pasha007",
             "database": "documents",
             "host": "localhost",
             "port": 5432,
@@ -20,7 +20,7 @@
         },      
         "server": {
             "protocol": "http",
-            "host": "10.11.13.201",
+            "host": "10.11.13.192",
             "port": 8082,
             "errorRestartIntervalInMinutes": 1,
             "resetDatabaseOnRestart": false,
@@ -36,10 +36,10 @@
     },
     "production": {
         "database": {
-            "username": "postgres",
-            "password": "1qasw2#ED",
+            "username": "uemi",
+            "password": "uemi2018",
             "database": "documents",
-            "host": "localhost",
+            "host": "10.11.62.74",
             "port": 5432,
             "dialect": "postgres",
             "logging": false

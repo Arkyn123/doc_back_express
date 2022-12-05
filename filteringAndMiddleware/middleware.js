@@ -82,7 +82,7 @@ middleware.setUserToRequest = async (req, res, next) => {
     return res.sendStatus(errors.unauthorized.code);
   }
   const token = authHeader.split(" ")[1];
-
+console.log(12321);
   try {
     // Если кеширование пользователя включено, то проверяем кеш на наличие токена, если токен присутствует,
     // то возвращаем пользователя из кеша
