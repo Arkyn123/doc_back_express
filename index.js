@@ -47,6 +47,9 @@ app.use(`${config.server.urlPrefix}/findMSSQL`, findMSSQLRouter);
 
 const fileRouter = require("./routes/file.router");
 app.use(`${config.server.urlPrefix}/file`, fileRouter);
+
+const reportRouter = require("./routes/report.router");
+app.use(`${config.server.urlPrefix}/report`, reportRouter);
 // Запуск сервера
 const startServer = async () => {
   const db = require("./models");
