@@ -11,6 +11,7 @@ const {
   ownerOrHasPermissions,
 } = require("../filteringAndMiddleware/middleware");
 const fetch = require("node-fetch");
+const { sequelize } = require("../models");
 class DocumentController {
   async getAllDocument(req, res) {
     try {
@@ -67,24 +68,67 @@ class DocumentController {
           };
         }
       }
-      //fgthrthr
-      if (!req.roles.some((r) => r.idAccessCode == "UEMI_ADMIN")) {
-        const idsArray = req.roles.map((r) => r.idOffice && r.idOffice);
-        idsArray.push(req.user.officeId);
-        filter.where["officeId"] = {
-          [Op.in]: idsArray,
-        };
+      const isSecretary = req.roles.some(
+        (r) =>
+          r.idAccessCode == "SDM_SECRETARY_CHECK" ||
+          r.idAccessCode == "SDM_SECRETARY_CHECK" ||
+          r.idAccessCode == "SDM_LABOR_CHECK" ||
+          r.idAccessCode == "SDM_LABOR_REGISTRATION"
+      );
+    
+      const usersFromArm = Object.keys(
+            await (
+              await fetch("http://10.11.62.74/uemi_new/frontend/web/index.php?r=api/personnel/get-functional-submission", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${req.token}`,
+                },
+                body: JSON.stringify({
+                  employee_number: `${req.user.id}`
+                }),
+              })
+            ).json()
+          ).map((x) => Number(x));
+          usersFromArm.push(req.user.id)
+      const isAdmin = req.roles.some((r) => r.idAccessCode == "UEMI_ADMIN");
+      if (isAdmin) {
+      } else {
+        if (isSecretary) {
+          const arr = req.roles
+            .filter((x) => x.idAccessCode.includes("SDM"))
+            .map((l) => l.idOffice);
+          arr.push(req.user.officeId);
+          const newArr = arr.filter(function (item, pos) {
+            return arr.indexOf(item) == pos;
+          });
+          filter.where["officeId"] = {
+            [Op.in]: newArr,
+          };
+        }
       }
-      // const new_filter = {
-      //   [Op.or]: filter,
-      // }
-      // console.warn(new_filter);
       const documents = await Document.findAll({
         ...filter,
         include: [{ all: true, nested: true, duplicating: true }],
       });
-      // console.table(documents.map((doc) => doc.dataValues));
-      return res.status(errors.success.code).json(documents);
+
+      if (isAdmin || isSecretary) {
+        return res.status(errors.success.code).json(documents);
+      }
+
+      // const usersFromArm = req.query.usersFromArm.map((x) => Number(x));
+      // console.log(usersFromArm);
+      const filteredDocumentsByLinear = [];
+      for (let i = 0; i < documents.length; i++) {
+        const document = documents[i];
+        document.users.map((x) => {
+          usersFromArm.includes(x.employeeNumber)
+            ? filteredDocumentsByLinear.push(document)
+            : null;
+        });
+      }
+
+      return res.status(errors.success.code).json(filteredDocumentsByLinear);
     } catch (e) {
       console.warn(e);
       return res.sendStatus(errors.internalServerError.code);

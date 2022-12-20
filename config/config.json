@@ -65,7 +65,8 @@
         "services": {
             "gatewayDecode": "http://10.11.62.74:3000/decode",
             "users": "http://10.11.62.74:3000/service/users/graphql",
-            "templater": "http://10.11.62.74:3000/service/documents_templater/api/template"
+            "templater": "http://10.11.62.74:3000/service/documents_templater/api/template",
+            "armMaster": "http://10.11.13.33:8080/uemi_new/frontend/web/index.php?r=api/personnel/get-functional-submission"
         }
     }
 }
