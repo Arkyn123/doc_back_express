@@ -24,9 +24,9 @@ class DocumentController {
       filter.where["flagDeleted"] = {
         [Op.eq]: null,
       };
-      if (req.query.officeName) {
-        filter.where["officeName"] = {
-          [Op.iLike]: `%${req.query.officeName}%`,
+      if (req.query.officeId) {
+        filter.where["officeId"] = {
+          [Op.eq]: req.query.officeId,
         };
       }
       if (req.query.fullname) {
@@ -75,22 +75,25 @@ class DocumentController {
           r.idAccessCode == "SDM_LABOR_CHECK" ||
           r.idAccessCode == "SDM_LABOR_REGISTRATION"
       );
-    
+
       const usersFromArm = Object.keys(
-            await (
-              await fetch("http://10.11.62.74/uemi_new/frontend/web/index.php?r=api/personnel/get-functional-submission", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${req.token}`,
-                },
-                body: JSON.stringify({
-                  employee_number: `${req.user.id}`
-                }),
-              })
-            ).json()
-          ).map((x) => Number(x));
-          usersFromArm.push(req.user.id)
+        await (
+          await fetch(
+            "http://10.11.62.74/uemi_new/frontend/web/index.php?r=api/personnel/get-functional-submission",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${req.token}`,
+              },
+              body: JSON.stringify({
+                employee_number: `${req.user.id}`,
+              }),
+            }
+          )
+        ).json()
+      ).map((x) => Number(x));
+      usersFromArm.push(req.user.id);
       const isAdmin = req.roles.some((r) => r.idAccessCode == "UEMI_ADMIN");
       if (isAdmin) {
       } else {
