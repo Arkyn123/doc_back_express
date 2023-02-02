@@ -119,16 +119,16 @@ class DocumentController {
         return res.status(errors.success.code).json(documents);
       }
 
-      // const usersFromArm = req.query.usersFromArm.map((x) => Number(x));
-      // console.log(usersFromArm);
       const filteredDocumentsByLinear = [];
       for (let i = 0; i < documents.length; i++) {
         const document = documents[i];
-        document.users.map((x) => {
-          usersFromArm.includes(x.employeeNumber)
-            ? filteredDocumentsByLinear.push(document)
-            : null;
-        });
+        document.users
+          .filter((x) => !!x)
+          .map((x) => {
+            usersFromArm.includes(x.employeeNumber)
+              ? filteredDocumentsByLinear.push(document)
+              : null;
+          });
       }
 
       return res.status(errors.success.code).json(filteredDocumentsByLinear);
@@ -506,7 +506,9 @@ class DocumentController {
       }
       if (!ownerOrHasPermissions(req, document))
         return res.sendStatus(errors.forbidden.code);
+        console.log(req.body.dateApplication);
       await document.update({
+        dateApplication: new Date(req.body.dateApplication),
         body: req.body.updatedDocument,
         users: req.body.users,
         officeName: req.body.officeName,
