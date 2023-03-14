@@ -7,17 +7,19 @@ const {} = require("../filteringAndMiddleware/associations");
 class FindScheduleMSSQLController {
   async getAllSchedule(req, res) {
     try {
-      const [results, metadata] = await sequelizeMSSQL.query(`SELECT distinct  
-      b.[ORG_ID]
-	 ,[ORG_NAME]
-     ,[PARENT_ORG_ID]
-     ,[PARENT_ORG_NAME]
-       ,b.[POSITION_ID]
-     ,b.[POSITION_NAME] 
-       -- ,*
-       FROM [ELR_Orders].[dbo].[T_XXHR_OSK_ASSIGNMENTS_V] a join [T_XXHR_OSK_POSITIONS] b on a.ORG_ID=b.ORG_ID
-       where b.POSITION_ID like '%${req.query.position}%' or b.POSITION_NAME like '%${req.query.position}%'
-      
+      const [results, metadata] = await sequelizeMSSQL.query(`
+      select distinct
+      a.ORG_ID,
+      b.ORG_NAME, 
+      c.PARENT_ORG_ID, 
+      c.PARENT_ORG_NAME, 
+      a.POSITION_ID, 
+      a.POSITION_NAME, 
+      (select distinct ORG_NAME from T_XXHR_OSK_ORG_HIERARHY_V where ORGANIZATION_ID = b.ORGANIZATION_ID_PARENT and DATE_TO > GETDATE()) as SECTOR
+      from [T_XXHR_OSK_POSITIONS] a
+      join [T_XXHR_OSK_ORG_HIERARHY_V] b on a.ORG_ID=b.ORGANIZATION_ID
+      join [T_XXHR_OSK_ASSIGNMENTS_V] c on a.ORG_ID=c.ORG_ID
+      where (b.DATE_TO > GETDATE()) and (a.POSITION_ID like '%${req.query.position}%' or a.POSITION_NAME like '%${req.query.position}%') 
 `);
       return res.status(errors.success.code).json(results);
     } catch (e) {

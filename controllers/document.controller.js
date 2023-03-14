@@ -75,7 +75,6 @@ class DocumentController {
           r.idAccessCode == "SDM_LABOR_CHECK" ||
           r.idAccessCode == "SDM_LABOR_REGISTRATION"
       );
-
       const usersFromArm = Object.keys(
         await (
           await fetch(
@@ -97,7 +96,7 @@ class DocumentController {
       const isAdmin = req.roles.some((r) => r.idAccessCode == "UEMI_ADMIN");
       if (isAdmin) {
       } else {
-        if (isSecretary) {
+        if (isSecretary && !req.query.officeId) {
           const arr = req.roles
             .filter((x) => x.idAccessCode.includes("SDM"))
             .map((l) => l.idOffice);
@@ -114,7 +113,6 @@ class DocumentController {
         ...filter,
         include: [{ all: true, nested: true, duplicating: true }],
       });
-
       if (isAdmin || isSecretary) {
         return res.status(errors.success.code).json(documents);
       }
@@ -498,6 +496,7 @@ class DocumentController {
 
   async updateDocumentInfoForRole(req, res, next) {
     try {
+      console.log(req.body.dateApplication);
       const document = await Document.findByPk(req.params.documentId, {
         include: [{ all: true, nested: true, duplicating: true }],
       });
@@ -508,7 +507,7 @@ class DocumentController {
         return res.sendStatus(errors.forbidden.code);
         console.log(req.body.dateApplication);
       await document.update({
-        dateApplication: new Date(req.body.dateApplication),
+        dateApplication: req.body.dateApplication,
         body: req.body.updatedDocument,
         users: req.body.users,
         officeName: req.body.officeName,
