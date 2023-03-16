@@ -117,17 +117,22 @@ class DocumentController {
         return res.status(errors.success.code).json(documents);
       }
 
-      const filteredDocumentsByLinear = [];
-      for (let i = 0; i < documents.length; i++) {
-        const document = documents[i];
-        document.users
-          .filter((x) => !!x)
-          .map((x) => {
-            usersFromArm.includes(x.employeeNumber)
-              ? filteredDocumentsByLinear.push(document)
-              : null;
-          });
-      }
+      // const filteredDocumentsByLinear = [];
+      // for (let i = 0; i < documents.length; i++) {
+      //   const document = documents[i];
+      //   document.users
+      //     .filter((x) => !!x)
+      //     .map((x) => {
+      //       usersFromArm.includes(x.employeeNumber)
+      //         ? filteredDocumentsByLinear.push(document)
+      //         : null;
+      //     });
+      // }
+      
+      const filteredDocumentsByLinear = documents.filter(function (x) {
+          const tempArray = x.users.map((m) => usersFromArm.includes(m.employeeNumber))
+          return !tempArray.includes(false)
+      });
 
       return res.status(errors.success.code).json(filteredDocumentsByLinear);
     } catch (e) {
@@ -505,7 +510,7 @@ class DocumentController {
       }
       if (!ownerOrHasPermissions(req, document))
         return res.sendStatus(errors.forbidden.code);
-        console.log(req.body.dateApplication);
+      console.log(req.body.dateApplication);
       await document.update({
         dateApplication: req.body.dateApplication,
         body: req.body.updatedDocument,

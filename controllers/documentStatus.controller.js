@@ -2,7 +2,6 @@ const db = require('../models')
 const { DocumentStatus, Sequelize } = db
 const { ValidationError } = Sequelize
 const errors = require('../utils/errors')
-const log = require('../loggers/eventLog')
 
 class DocumentStatusController {
     async getAllStatuses(req, res) {
