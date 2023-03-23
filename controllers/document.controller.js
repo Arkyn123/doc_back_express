@@ -112,6 +112,7 @@ class DocumentController {
       const documents = await Document.findAll({
         ...filter,
         include: [{ all: true, nested: true, duplicating: true }],
+        limit: 100,
       });
       if (isAdmin || isSecretary) {
         return res.status(errors.success.code).json(documents);
@@ -128,10 +129,12 @@ class DocumentController {
       //         : null;
       //     });
       // }
-      
+
       const filteredDocumentsByLinear = documents.filter(function (x) {
-          const tempArray = x.users.map((m) => usersFromArm.includes(m.employeeNumber))
-          return !tempArray.includes(false)
+        const tempArray = x.users.map((m) =>
+          usersFromArm.includes(m.employeeNumber)
+        );
+        return !tempArray.includes(false);
       });
 
       return res.status(errors.success.code).json(filteredDocumentsByLinear);
@@ -501,7 +504,6 @@ class DocumentController {
 
   async updateDocumentInfoForRole(req, res, next) {
     try {
-      console.log(req.body.dateApplication);
       const document = await Document.findByPk(req.params.documentId, {
         include: [{ all: true, nested: true, duplicating: true }],
       });
@@ -510,7 +512,6 @@ class DocumentController {
       }
       if (!ownerOrHasPermissions(req, document))
         return res.sendStatus(errors.forbidden.code);
-      console.log(req.body.dateApplication);
       await document.update({
         dateApplication: req.body.dateApplication,
         body: req.body.updatedDocument,

@@ -1,5 +1,5 @@
 const dbMSSQL = require("../modelsMSSQL");
-const { SequelizeMSSQL, sequelizeMSSQL } = dbMSSQL;
+const { SequelizeMSSQL, sequelizeMSSQL, T_XXHR_SCHEDULE_BRIGADES } = dbMSSQL;
 const { ValidationError } = SequelizeMSSQL;
 const errors = require("../utils/errors");
 const {} = require("../filteringAndMiddleware/associations");
@@ -29,14 +29,23 @@ class FindScheduleMSSQLController {
   }
   async getAllBrigada(req, res) {
     try {
-      const [results, metadata] = await sequelizeMSSQL.query(`SELECT distinct 
-      [SCHEDULE],
-      [BRIGADA],
-      b.NAME
-      from [T_XXHR_WORKER_INFORMATION] a join [T_XXHR_WORK_SCHEDULES] b on a.SCHEDULE=b.CODE
-      where BRIGADA like '%${req.query.brigada}%'    
-`);
+      const [results, metadata] = await sequelizeMSSQL.query(
+        `SELECT distinct WORK_SCHEDULE_ID, CODE as SCHEDULE, NAME from T_XXHR_WORK_SCHEDULES WHERE CODE LIKE '%${req.query.brigada}%'`
+      );
       return res.status(errors.success.code).json(results);
+    } catch (e) {
+      console.log(e);
+      return res.sendStatus(errors.internalServerError.code);
+    }
+  }
+  async getAllBrigades(req, res) {
+    try {
+      const brigades = await T_XXHR_SCHEDULE_BRIGADES.findAll({
+        where: {
+          WORK_SCHEDULE_ID: req.query.brigades,
+        },
+      });
+      return res.status(errors.success.code).json(brigades);
     } catch (e) {
       console.log(e);
       return res.sendStatus(errors.internalServerError.code);
