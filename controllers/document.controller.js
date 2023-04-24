@@ -54,6 +54,10 @@ class DocumentController {
         filter.where["permitionCurrent"] = {
           [Op.in]: req.roles.map((r) => r.idAccessCode),
         };
+
+        filter.where["statusId"] = {
+          [Op.eq]: 3
+        }
       }
       if (req.query.modelDate) {
         if (req.query.modelDate.length == 10) {
@@ -117,18 +121,6 @@ class DocumentController {
       if (isAdmin || isSecretary) {
         return res.status(errors.success.code).json(documents);
       }
-
-      // const filteredDocumentsByLinear = [];
-      // for (let i = 0; i < documents.length; i++) {
-      //   const document = documents[i];
-      //   document.users
-      //     .filter((x) => !!x)
-      //     .map((x) => {
-      //       usersFromArm.includes(x.employeeNumber)
-      //         ? filteredDocumentsByLinear.push(document)
-      //         : null;
-      //     });
-      // }
 
       const filteredDocumentsByLinear = documents.filter(function (x) {
         const tempArray = x.users.map((m) =>
