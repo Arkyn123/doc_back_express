@@ -55,7 +55,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       users: {
-        type: DataTypes.ARRAY(DataTypes.JSON),
+        type: DataTypes.JSONB,
         defaultValue: () => [],
       },
       usernames: {

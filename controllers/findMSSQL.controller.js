@@ -10,12 +10,13 @@ class FindScheduleMSSQLController {
       const [results, metadata] = await sequelizeMSSQL.query(`
       select distinct
       a.ORG_ID,
-      b.ORG_NAME, 
+      (select ORG_NAME from T_XXHR_OSK_ORG_HIERARHY_V where ORGANIZATION_ID = a.ORG_ID and DATE_TO > GETDATE() and TYPE_NAME != 'Цех') as ORG_NAME, 
       c.PARENT_ORG_ID, 
       c.PARENT_ORG_NAME, 
       a.POSITION_ID, 
       a.POSITION_NAME, 
-      (select distinct ORG_NAME from T_XXHR_OSK_ORG_HIERARHY_V where ORGANIZATION_ID = b.ORGANIZATION_ID_PARENT and DATE_TO > GETDATE()) as SECTOR
+      b.TYPE_NAME,
+      (select distinct ORG_NAME from T_XXHR_OSK_ORG_HIERARHY_V where ORGANIZATION_ID = b.ORGANIZATION_ID_PARENT and DATE_TO > GETDATE() and b.TYPE_NAME != 'Цех' and b.TYPE_NAME != 'Участок') as SECTOR
       from [T_XXHR_OSK_POSITIONS] a
       join [T_XXHR_OSK_ORG_HIERARHY_V] b on a.ORG_ID=b.ORGANIZATION_ID
       join [T_XXHR_OSK_ASSIGNMENTS_V] c on a.ORG_ID=c.ORG_ID

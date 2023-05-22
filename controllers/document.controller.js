@@ -44,6 +44,7 @@ class DocumentController {
           [Op.iLike]: `%${req.query.authorFullname}%`,
         };
       }
+
       if (req.query.myDocumentsFlag && req.query.myDocumentsFlag == "true") {
         const ids = req.roles.map((r) => r.idOffice);
         ids.push(req.user.officeId);
@@ -56,8 +57,8 @@ class DocumentController {
         };
 
         filter.where["statusId"] = {
-          [Op.eq]: 3
-        }
+          [Op.eq]: 3,
+        };
       }
       if (req.query.modelDate) {
         if (req.query.modelDate.length == 10) {
@@ -97,6 +98,8 @@ class DocumentController {
         ).json()
       ).map((x) => Number(x));
       usersFromArm.push(req.user.id);
+
+
       const isAdmin = req.roles.some((r) => r.idAccessCode == "UEMI_ADMIN");
       if (isAdmin) {
       } else {
@@ -113,23 +116,40 @@ class DocumentController {
           };
         }
       }
+      if (!isAdmin && !isSecretary) {
+        filter.where["authorPersonalNumber"] = {
+          [Op.eq]: req.user.id,
+        };
+        filter.where = {
+          [Op.or]: [
+            { authorPersonalNumber: req.user.id },
+            {
+              users: {
+                [Op.or]: usersFromArm.map((en) => {
+                  return {
+                    [Op.contains]: [
+                      {
+                        employeeNumber: en,
+                      },
+                    ],
+                  };
+                }),
+              },
+            },
+          ],
+        };
+      }
+        
+      
+
       const documents = await Document.findAll({
+        where: {},
         ...filter,
         include: [{ all: true, nested: true, duplicating: true }],
         limit: 100,
+        // logging: console.log
       });
-      if (isAdmin || isSecretary) {
-        return res.status(errors.success.code).json(documents);
-      }
-
-      const filteredDocumentsByLinear = documents.filter(function (x) {
-        const tempArray = x.users.map((m) =>
-          usersFromArm.includes(m.employeeNumber)
-        );
-        return !tempArray.includes(false);
-      });
-
-      return res.status(errors.success.code).json(filteredDocumentsByLinear);
+      return res.status(errors.success.code).json(documents);
     } catch (e) {
       console.warn(e);
       return res.sendStatus(errors.internalServerError.code);
