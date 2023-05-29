@@ -120,7 +120,7 @@ class DocumentController {
         filter.where["authorPersonalNumber"] = {
           [Op.eq]: req.user.id,
         };
-        filter.where = {
+        filter.where = { ...filter.where, 
           [Op.or]: [
             { authorPersonalNumber: req.user.id },
             {
@@ -141,10 +141,12 @@ class DocumentController {
       }
         
       
-
       const documents = await Document.findAll({
-        where: {},
+        
         ...filter,
+        flagDeleted: [{
+          [Op.eq]: null
+        }],
         include: [{ all: true, nested: true, duplicating: true }],
         limit: 100,
         // logging: console.log
