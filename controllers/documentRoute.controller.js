@@ -15,7 +15,7 @@ class DocumentRouteController {
       });
       return res.status(errors.success.code).json(documentRoutes);
     } catch (e) {
-        console.log(e)
+      console.log(e);
       return res.sendStatus(errors.internalServerError.code);
     }
   }
@@ -28,7 +28,7 @@ class DocumentRouteController {
         },
         include: [{ all: true, nested: true, duplicating: true }],
       });
-      
+
       return res.status(errors.success.code).json(documentRoutes);
     } catch (e) {
       return res.sendStatus(errors.internalServerError.code);
@@ -54,12 +54,10 @@ class DocumentRouteController {
       if (!result) {
         return res.sendStatus(errors.notFound.code);
       }
-      // if (!ownerOrHasPermissions(req, result))
-      //   return res.sendStatus(errors.forbidden.code);
       await result.destroy();
       return res.sendStatus(errors.success.code);
     } catch (e) {
-      console.log(e)
+      console.log(e);
       return res.sendStatus(errors.internalServerError.code);
     }
   }

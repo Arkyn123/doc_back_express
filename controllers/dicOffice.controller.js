@@ -15,18 +15,10 @@ class DicOfficeController {
       } else {
         filter.where = { ...filter.where };
       }
-
-      // const idsArray = req.roles.map((r) => r.idOffice && r.idOffice);
-      // if (!req.roles.some((r) => r.idAccessCode == "UEMI_ADMIN")) {
-      //   filter.where["ID"] = {
-      //     [Op.in]: idsArray,
-      //   };
-      // }
       const dic_office = await DIC_OFFICE.findAll({
         ...filter,
         include: [{ all: true, nested: true, duplicating: true }],
       });
-      //   console.warn(b.map(a => a.dataValues));
       return res.status(errors.success.code).json(dic_office);
     } catch (e) {
       console.log(e);

@@ -6,7 +6,7 @@ const controller = require("../controllers/file.controller");
 
 router.get("/:id", controller.getFileById);
 router.post("/add", controller.addNewFile);
-router.get("/", controller.getFiles)
-router.put("/delete/:id", controller.deleteFile)
+router.get("/", controller.getFiles);
+router.put("/delete/:id", controller.deleteFile);
 
 module.exports = router;

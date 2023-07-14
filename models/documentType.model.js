@@ -16,8 +16,5 @@ module.exports = (sequelize, DataTypes) => {
       freezeTableName: true,
     }
   );
-  // DocumentType.associate = function (models) {
-  //   DocumentType.hasMany(models.DocumentRoute, { onDelete: 'CASCADE', foreignKey: 'documentTypeId', as: 'DocumentType' })
-  // };
   return DocumentType;
 };

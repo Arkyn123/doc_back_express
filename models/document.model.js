@@ -100,7 +100,6 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "documentId",
       as: "documentOrderLog",
     });
-    // Document.belongsTo(models.DocumentType, { as: "documentType" , keyType: DataTypes.STRING(256)});
   };
   return Document;
 };

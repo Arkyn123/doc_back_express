@@ -12,6 +12,7 @@ const {
 } = require("../filteringAndMiddleware/middleware");
 const fetch = require("node-fetch");
 const { sequelize } = require("../models");
+
 class DocumentController {
   async getAllDocument(req, res) {
     try {
@@ -99,7 +100,6 @@ class DocumentController {
       ).map((x) => Number(x));
       usersFromArm.push(req.user.id);
 
-
       const isAdmin = req.roles.some((r) => r.idAccessCode == "UEMI_ADMIN");
       if (isAdmin) {
       } else {
@@ -120,7 +120,8 @@ class DocumentController {
         filter.where["authorPersonalNumber"] = {
           [Op.eq]: req.user.id,
         };
-        filter.where = { ...filter.where, 
+        filter.where = {
+          ...filter.where,
           [Op.or]: [
             { authorPersonalNumber: req.user.id },
             {
@@ -139,17 +140,16 @@ class DocumentController {
           ],
         };
       }
-        
-      
+
       const documents = await Document.findAll({
-        
         ...filter,
-        flagDeleted: [{
-          [Op.eq]: null
-        }],
+        flagDeleted: [
+          {
+            [Op.eq]: null,
+          },
+        ],
         include: [{ all: true, nested: true, duplicating: true }],
         limit: 100,
-        // logging: console.log
       });
       return res.status(errors.success.code).json(documents);
     } catch (e) {
@@ -439,10 +439,7 @@ class DocumentController {
           fullname: req.user.fullname,
         });
       }
-      if (
-        // req.user.id == document.dataValues.authorPersonalNumber &&
-        req.body.flagUpdateDraft
-      ) {
+      if (req.body.flagUpdateDraft) {
         await document.update({
           body: req.body.updatedDocument,
           permitionCurrent: route.dataValues.permition,
@@ -455,60 +452,6 @@ class DocumentController {
           documentType: req.body.documentType,
         });
       }
-
-      // ПОИСК ЛЮДЕЙ ПО ПРАВУ
-      //   const userDataFromGraphQL = (
-      //     await (
-      //       await fetch(config.services.users, {
-      //         method: "POST",
-      //         headers: {
-      //           "Content-Type": "application/json",
-      //           Authorization: `Bearer ${req.token}`,
-      //         },
-      //         body: JSON.stringify({
-      //           query: `query {
-      //             Workers(idAccessCode: "${document.dataValues.permitionCurrent}") {
-      //               employeeNumber permissions {idOffice idAccessCode}
-      //             }
-      //           }`,
-      //         }),
-      //       })
-      //     ).json()
-      //   ).data;
-      //  console.log(document.statusId)
-
-      //   await fetch(config.services.mailer, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     Authorization: `Bearer ${req.token}`,
-      //   },
-      //   body: JSON.stringify({
-      //       "employeeNumber": 184184,
-      //       "subject": "SDM",
-      //       "body": `Проект № <strong>12321354354 УПРАЛВЕНИЕ</strong>(какой то комментарий который кто то написал) </strong> согласован <p><a href='http://localhost:8080/documents/#form/3' rel='noopener noreferrer' target='_blank'>SDM создание документа</a></p>`,
-      //       "isHTML": true,
-      //      "sendAt": "2022-08-09T09:25:17.321Z"
-      //   })
-      // });
-      // var result = [];
-      // for (let i = 0; i < userDataFromGraphQL.Workers.length; i++) {
-      //   for (
-      //     let j = 0;
-      //     j < userDataFromGraphQL.Workers[i].permissions.length;
-      //     j++
-      //   ) {
-      //     if (
-      //       userDataFromGraphQL.Workers[i].permissions[j].idOffice ==
-      //         document.officeId &&
-      //       userDataFromGraphQL.Workers[i].permissions[j].idAccessCode ==
-      //         document.dataValues.permitionCurrent
-      //     )
-      //       result.push(userDataFromGraphQL.Workers[i].employeeNumber);
-      //   }
-      // }
-      // console.log(result);
-
       return res.status(errors.success.code).json(document);
     } catch (e) {
       console.log(e);

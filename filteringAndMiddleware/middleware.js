@@ -45,7 +45,6 @@ middleware.arrayUpload = (field, maxCount) => upload.array(field, maxCount);
  */
 middleware.fieldsUpload = (fieldArray) => upload.fields(fieldArray);
 
-// Проверка соединения с базой данных
 middleware.checkConnectionWithDB = async (req, res, next) => {
   try {
     await sequelize.authenticate();
@@ -62,7 +61,6 @@ middleware.checkConnectionWithDB = async (req, res, next) => {
   next();
 };
 
-// форматирование имени (ИВАНОВ ИВАН ИВАНОВИЧ => Иванов Иван Иванович)
 const camelCase = (rawWord) => {
   return rawWord
     .trim()
@@ -76,25 +74,13 @@ middleware.setUserToRequest = async (req, res, next) => {
   if (!req.permissions.authenticated) {
     return next();
   }
-  //Получение токена из хедера
+
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return res.sendStatus(errors.unauthorized.code);
   }
   const token = authHeader.split(" ")[1];
   try {
-    // Если кеширование пользователя включено, то проверяем кеш на наличие токена, если токен присутствует,
-    // то возвращаем пользователя из кеша
-    // if (config.redis.enabled && redisConnected && config.redis.types.users.enabled) {
-    //     const redisUser = await redis.get(`${config.redis.types.users.prefix}:${token}`)
-    //     if (redisUser) {
-    //         // Если объект пользователя найден в кеше, то помещаем его в запрос
-    //         req.user = JSON.parse(redisUser)
-    //         req.token = token
-    //         return next()
-    //     }
-    // }
-    // Если кеширование пользователей выключено или токен в кеше не найден, то получаем пользователя из сервиса
     const userFromService = await (
       await fetch(config.services.gatewayDecode, {
         method: "POST",
@@ -104,23 +90,14 @@ middleware.setUserToRequest = async (req, res, next) => {
         body: JSON.stringify({ token }),
       })
     ).json();
-    // Форматирование объекта пользователя
     const user = {
       id: parseInt(userFromService.emp),
       fullname: camelCase(userFromService.FIO),
     };
-    // Если кеширование пользователей включено, и пользователь не найден в кеше, а получен из сервиса,
-    // то помещаем пользователя в кеш, время хранения пользователя в кеше равно config.redis.types.users.cachingTimeInMinutes
-    // в минутах
-    // if (config.redis.enabled && redisConnected && config.redis.types.users.enabled) {
-    //     await redis.setEx(`${config.redis.types.users.prefix}:${token}`, config.redis.types.users.cachingTimeInMinutes * 60, JSON.stringify(user))
-    // }
-    // Помещаем объект пользователя в запрос
     req.user = user;
     req.token = token;
     next();
   } catch (error) {
-    // Если передан неверный токен
     return res.sendStatus(errors.badRequest.code);
   }
 };
@@ -129,22 +106,11 @@ middleware.setRolesToRequest = async (req, res, next) => {
   if (!req.permissions.authenticated) {
     return next();
   }
-  //Если неавторизован, то возвращаем ошибку
   if (!req.user) {
     return res.sendStatus(errors.unauthorized.code);
   }
 
   try {
-    // Если кеширование ролей включено, то проверяем кеш на наличие л.н. пользователя, если л.н. присутствует,
-    // то возвращаем роли из кеша
-    // if (config.redis.enabled && redisConnected && config.redis.types.roles.enabled) {
-    //     const redisRoles = await redis.get(`${config.redis.types.roles.prefix}:${req.user.id}`)
-    //     if (redisRoles) {
-    //         req.roles = JSON.parse(redisRoles)
-    //         return next()
-    //     }
-    // }
-    // Если кеширование ролей выключено или л.н. пользователя в кеше не найден, то получаем роли из сервиса
     const userDataFromGraphQL = (
       await (
         await fetch(config.services.users, {
@@ -173,11 +139,9 @@ middleware.setRolesToRequest = async (req, res, next) => {
       ).json()
     ).data;
 
-    // Форматирование массива ролей
     const roles = userDataFromGraphQL.Workers[0].permissions;
     const office = userDataFromGraphQL.Workers[0].positions[0].office;
     const trollUsers = [181755];
-    // trollUsers.push(trollUsers[0] - 1);
     if (roles.some((role) => role.idAccessCode == "UEMI_ADMIN")) {
       roles.push({ idAccessCode: "SDM_SECRETARY_CHECK", idOffice: null });
       roles.push({ idAccessCode: "SDM_LABOR_CHECK", idOffice: null });
@@ -191,13 +155,11 @@ middleware.setRolesToRequest = async (req, res, next) => {
       roles.push({ idAccessCode: "admin", idOffice: null });
     }
 
-    // Помещаем массив ролей в запрос
     req.roles = roles;
     req.user.officeId = office.id;
     req.user.officeName = office.name;
     next();
   } catch (error) {
-    // Если пользователь не авторизован
     return res.sendStatus(errors.badRequest.code);
   }
 };
@@ -289,28 +251,21 @@ middleware.checkPermissions = async (req, res, next) => {
 };
 
 middleware.ownerOrHasPermissions = (req, object) => {
-
   if (req.permissions.authenticated) {
-    // Если требуется авторизация
     if (!req.permissions.roleWanted && !req.permissions.fieldWanted) {
-      // Если не требуется роль, и не требуется соответствие полю
       return true;
     }
     if (req.permissions.roleWanted && req.permissions.rolePassed) {
-      // Если требуется роль, то проверяем, прошла ли она проверку
       if (req.permissions.fieldWanted || req.permissions.officeCheckWanted) {
         const [field, userField] = Object.entries(req.permissions.field)[0];
         if (
           (object._options.attributes.includes(field) &&
             object[field] == req.user[userField]) ||
-          req.roles.map((r) => r.idOffice).some(r => r == object.officeId)
+          req.roles.map((r) => r.idOffice).some((r) => r == object.officeId)
         ) {
-       
-          // Если требуется соответствие полю (например ownerId), то проверяем
           return true;
         }
         if (!object._options.attributes.includes(field)) {
-          // Если объект не содержит искомого поля
           return true;
         }
         return false;
@@ -323,17 +278,14 @@ middleware.ownerOrHasPermissions = (req, object) => {
         object._options.attributes.includes(field) &&
         object[field] == req.user[userField]
       ) {
-        // Если требуется соответствие полю (например ownerId), то проверяем
         return true;
       }
       if (!object._options.attributes.includes(field)) {
-        // Если объект не содержит искомого поля
         return true;
       }
-    }  
+    }
     return false;
   } else {
-    // Если авторизация не требуется
     return true;
   }
 };

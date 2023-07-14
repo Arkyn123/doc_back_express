@@ -16,10 +16,12 @@ class DicOfficeCorrespondenceController {
       } else {
         filter.where = { ...filter.where };
       }
-      const dic_office_correspondence = await DIC_OFFICE_CORRESPONDENCE.findAll({
-        ...filter,
-        include: [{ all: true, nested: true, duplicating: true }],
-      });
+      const dic_office_correspondence = await DIC_OFFICE_CORRESPONDENCE.findAll(
+        {
+          ...filter,
+          include: [{ all: true, nested: true, duplicating: true }],
+        }
+      );
       return res.status(errors.success.code).json(dic_office_correspondence);
     } catch (e) {
       return res.sendStatus(errors.internalServerError.code);
@@ -27,7 +29,11 @@ class DicOfficeCorrespondenceController {
   }
   async addInDictionary(req, res) {
     try {
-      const dic_office_correspondence = await DIC_OFFICE_CORRESPONDENCE.create({...req.body, CreatedDate: Date.now(), FlagDeleted: false});
+      const dic_office_correspondence = await DIC_OFFICE_CORRESPONDENCE.create({
+        ...req.body,
+        CreatedDate: Date.now(),
+        FlagDeleted: false,
+      });
       return res.status(errors.success.code).json(dic_office_correspondence);
     } catch (e) {
       return res.sendStatus(errors.internalServerError.code);
@@ -35,12 +41,14 @@ class DicOfficeCorrespondenceController {
   }
   async saveInDictionary(req, res) {
     try {
-      const dic_office_correspondence = await DIC_OFFICE_CORRESPONDENCE.findByPk(req.params.id);
+      const dic_office_correspondence =
+        await DIC_OFFICE_CORRESPONDENCE.findByPk(req.params.id);
       if (!dic_office_correspondence) {
         return res.sendStatus(errors.notFound.code);
       }
       await dic_office_correspondence.update({
-        ...req.body, UpdatedDate: Date.now()
+        ...req.body,
+        UpdatedDate: Date.now(),
       });
       return res.status(errors.success.code).json(dic_office_correspondence);
     } catch (e) {
@@ -50,20 +58,19 @@ class DicOfficeCorrespondenceController {
   }
   async delInDictionary(req, res) {
     try {
-        const dic_office_correspondence = await DIC_OFFICE_CORRESPONDENCE.findByPk(req.params.id)
-        if (!dic_office_correspondence) {
-            return res
-                .sendStatus(errors.notFound.code)
-        }
-        await dic_office_correspondence.update({
-          DeletedDate: Date.now(), FlagDeleted: true
-        });
-        return res
-            .sendStatus(errors.success.code)
+      const dic_office_correspondence =
+        await DIC_OFFICE_CORRESPONDENCE.findByPk(req.params.id);
+      if (!dic_office_correspondence) {
+        return res.sendStatus(errors.notFound.code);
+      }
+      await dic_office_correspondence.update({
+        DeletedDate: Date.now(),
+        FlagDeleted: true,
+      });
+      return res.sendStatus(errors.success.code);
     } catch (e) {
-        return res
-            .sendStatus(errors.internalServerError.code)
+      return res.sendStatus(errors.internalServerError.code);
     }
-}
+  }
 }
 module.exports = new DicOfficeCorrespondenceController();

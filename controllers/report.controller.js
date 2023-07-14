@@ -16,11 +16,8 @@ class DocumentReport {
               ],
             },
             flagDeleted: {
-              [Op.not]: true
-            }
-            // dateApplication: {
-            //   [Op.gte]: new Date(req.body.startDate),
-            // },
+              [Op.not]: true,
+            },
           },
         ],
       });
@@ -34,7 +31,7 @@ class DocumentReport {
           date: m.dateApplication,
         })
       );
-      const os = {'1': 0, '2': 0, '3': 0, '4': 0}
+      const os = { 1: 0, 2: 0, 3: 0, 4: 0 };
       const count = values.reduce((acc, n) => {
         (acc[n.officeName] || (acc[n.officeName] = { ...os }))[n.status]++;
         return acc;

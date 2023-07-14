@@ -23,7 +23,7 @@ module.exports = function (sequelize, DataTypes) {
       timestamps: false,
     }
   );
-  T_XXHR_SCHEDULE_BRIGADES.removeAttribute('id');
+  T_XXHR_SCHEDULE_BRIGADES.removeAttribute("id");
 
   return T_XXHR_SCHEDULE_BRIGADES;
 };

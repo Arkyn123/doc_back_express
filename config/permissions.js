@@ -5,9 +5,6 @@ const permissions = {
   UEMI_ADMIN: {
     role: "UEMI_ADMIN",
   },
-  // SDM: {
-  //   role: "SDM",
-  // },
   SDM_Secretary_Check: {
     role: "SDM_SECRETARY_CHECK",
     officeCheck: true,

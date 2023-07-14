@@ -10,7 +10,7 @@ class DocumentTypeController {
   async getAllDocumentType(req, res) {
     try {
       const documentTypes = await DocumentType.findAll({
-          include: [{ all: true, nested: true, duplicating: true }]
+        include: [{ all: true, nested: true, duplicating: true }],
       });
       return res.status(errors.success.code).json(documentTypes);
     } catch (e) {
@@ -18,7 +18,7 @@ class DocumentTypeController {
     }
   }
   async addNewDocumentType(req, res) {
-    console.log(req.body)
+    console.log(req.body);
     try {
       const result = await DocumentType.upsert({ ...req.body });
       return res.status(errors.success.code).json(result.dataValues);

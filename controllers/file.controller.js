@@ -7,7 +7,6 @@ const {
 } = require("../filteringAndMiddleware/associations");
 class DocumentFiles {
   async addNewFile(req, res) {
-    //   console.log(ownerOrHasPermissions);
     try {
       const newFile = await DocumentFile.create({
         ...req.body,

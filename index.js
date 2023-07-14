@@ -26,22 +26,28 @@ app.use(checkConnectionWithDB);
 // Подключение роутеров
 const documentRouter = require("./routes/document.router");
 app.use(`${config.server.urlPrefix}/document`, documentRouter);
+
 const documentStatusRouter = require("./routes/documentStatus.router");
 app.use(`${config.server.urlPrefix}/documentStatus`, documentStatusRouter);
 
 const dicOfficeRouter = require("./routes/dicOffice.router");
 app.use(`${config.server.urlPrefix}/dicOffice`, dicOfficeRouter);
+
 const dicOfficeRouterCorrespondence = require("./routes/dicOfficeCorrespondence.router");
 app.use(
   `${config.server.urlPrefix}/dicOfficeCorrespondence`,
   dicOfficeRouterCorrespondence
 );
+
 const documentTypeRouter = require("./routes/documentType.router");
 app.use(`${config.server.urlPrefix}/documentType`, documentTypeRouter);
+
 const documentRouteRouter = require("./routes/documentRoute.router");
 app.use(`${config.server.urlPrefix}/documentRoute`, documentRouteRouter);
+
 const userRouter = require("./routes/user.router");
 app.use(`${config.server.urlPrefix}/user`, userRouter);
+
 const findMSSQLRouter = require("./routes/findMSSQL.router");
 app.use(`${config.server.urlPrefix}/findMSSQL`, findMSSQLRouter);
 
@@ -50,6 +56,7 @@ app.use(`${config.server.urlPrefix}/file`, fileRouter);
 
 const reportRouter = require("./routes/report.router");
 app.use(`${config.server.urlPrefix}/report`, reportRouter);
+
 // Запуск сервера
 const startServer = async () => {
   const db = require("./models");
@@ -75,15 +82,16 @@ const startServer = async () => {
           await db[d].bulkCreate(defaultsValues[d]);
         });
         // fetch("http://10.11.62.74:3000/service/documents_templater/api/template")
-        fetch(config.services.templater)//
+        fetch(config.services.templater) //
           .then((res) => res.json())
           .then((templates) => {
-            console.log(templates)
-            templates = templates.filter((a, i) => templates.findIndex((s) => a.name === s.name) === i)
+            console.log(templates);
+            templates = templates.filter(
+              (a, i) => templates.findIndex((s) => a.name === s.name) === i
+            );
             db["DocumentType"].bulkCreate(
               templates.map((template) => ({
                 id: template.name,
-
               }))
             );
             db["DocumentRoute"].bulkCreate(
@@ -135,7 +143,8 @@ const startServer = async () => {
     // Перезапуск в случае неудачного подключения к базе данных
     console.log(
       "Server cannot connect to database, restart after ",
-      config.server.errorRestartIntervalInMinutes, error,
+      config.server.errorRestartIntervalInMinutes,
+      error,
       " minutes"
     );
     setTimeout(

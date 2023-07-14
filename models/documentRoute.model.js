@@ -31,16 +31,12 @@ module.exports = (sequelize, DataTypes) => {
       documentType: {
         type: DataTypes.STRING(256),
         allowNull: false,
-      }
+      },
     },
     {
       freezeTableName: true,
     }
   );
-  // DocumentRoute.associate = function (models) {
-  //   // Джоины
-  //   DocumentRoute.belongsTo(models.DocumentType, { as: "documentType"});
-  // };
 
   return DocumentRoute;
 };

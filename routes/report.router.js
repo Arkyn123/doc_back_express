@@ -4,5 +4,4 @@ const controller = require("../controllers/report.controller");
 
 router.post("/", controller.getAllDocumentsInfo);
 
-
 module.exports = router;
