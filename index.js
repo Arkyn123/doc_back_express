@@ -14,7 +14,9 @@ global.serverPath = __dirname;
 global.connected = false;
 
 // Промежуточная функция проверки подключения к базе данных
-const { checkConnectionWithDB } = require("./middleware/middleware");
+const {
+  checkConnectionWithDB,
+} = require("./filteringAndMiddleware/middleware");
 
 app.use(express.json({ limit: config.server.requestMaxSize }));
 app.use(

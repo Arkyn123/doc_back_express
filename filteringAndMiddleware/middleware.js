@@ -180,7 +180,11 @@ middleware.setWantedPermission = (req, res, next) => {
       .split("/")
       .filter((item) => item != ""),
   ];
+
   const path = req.route.path;
+
+  console.log(routerPath, path);
+
   const routerPermissions = getRouterPermissions(routerPath)[path];
   const permissions = {};
   permissions.roles = routerPermissions

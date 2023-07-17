@@ -6,7 +6,11 @@ const controller = require("../controllers/document.controller");
 
 router.get("/", permissions, setFilterFromClient, controller.getAllDocument);
 router.get("/:documentId", permissions, controller.getDocumentById);
-router.post("/add", permissions, controller.addNewDocument);
+router.post(
+  "/add",
+  permissions,
+  controller.addNewDocument
+);
 router.post("/addInDraft", permissions, controller.addNewDocumentInDraft);
 router.put(
   "/update/:documentId",

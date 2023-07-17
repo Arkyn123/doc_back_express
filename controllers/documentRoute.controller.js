@@ -22,6 +22,8 @@ class DocumentRouteController {
 
   async getDocumentRouteByDocumentTypeId(req, res) {
     try {
+      console.log(req.params.documentTypeId);
+
       const documentRoutes = await DocumentRoute.findAll({
         where: {
           documentTypeId: req.params.documentTypeId,
