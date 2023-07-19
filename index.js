@@ -9,6 +9,7 @@ const server = require("http").createServer(app);
 const cors = require("cors");
 
 global.config = config;
+
 global.serverPath = __dirname;
 
 global.connected = false;
@@ -69,33 +70,41 @@ const startServer = async () => {
   try {
     // Синхронизация моделей с базой данных, флаг resetDatabaseOnRestart отвечает за принудительную очистку базы данных при перезапуске сервера
     await db.sequelize.sync({ force: config.server.resetDatabaseOnRestart });
+
     await dbMSSQL.sequelizeMSSQL.sync({ force: false });
+
     server.listen(config.server.port, config.server.host, async () => {
       console.log(`Mode: ${env}`);
+
       console.log(
         `Server run on\t${config.server.protocol}://${config.server.host}:${config.server.port}`
       );
+
       console.log(
         `DB connected\t${config.database.dialect}://${config.database.host}:${config.database.port}`
       );
+
       if (config.server.resetDatabaseOnRestart) {
         const defaultsValues = require("./defaults/defaults.json");
+
         Object.keys(defaultsValues).forEach(async (d) => {
           await db[d].bulkCreate(defaultsValues[d]);
         });
-        // fetch("http://10.11.62.74:3000/service/documents_templater/api/template")
-        fetch(config.services.templater) //
+
+        fetch(config.services.templater)
           .then((res) => res.json())
           .then((templates) => {
             console.log(templates);
             templates = templates.filter(
               (a, i) => templates.findIndex((s) => a.name === s.name) === i
             );
+
             db["DocumentType"].bulkCreate(
               templates.map((template) => ({
                 id: template.name,
               }))
             );
+
             db["DocumentRoute"].bulkCreate(
               templates.map((template) => ({
                 documentType: template.name,
@@ -106,6 +115,7 @@ const startServer = async () => {
                 ownerFullname: "Воробьев Алексей Павлович",
               }))
             );
+
             db["DocumentRoute"].bulkCreate(
               templates.map((template) => ({
                 documentType: template.name,
@@ -116,6 +126,7 @@ const startServer = async () => {
                 ownerFullname: "Воробьев Алексей Павлович",
               }))
             );
+
             db["DocumentRoute"].bulkCreate(
               templates.map((template) => ({
                 documentType: template.name,
@@ -126,6 +137,7 @@ const startServer = async () => {
                 ownerFullname: "Воробьев Алексей Павлович",
               }))
             );
+
             db["DocumentRoute"].bulkCreate(
               templates.map((template) => ({
                 documentType: template.name,
@@ -139,6 +151,7 @@ const startServer = async () => {
           });
         console.log("Database and uploads dropped, Defaults loaded");
       }
+
       connected = true;
     });
   } catch (error) {
@@ -149,6 +162,7 @@ const startServer = async () => {
       error,
       " minutes"
     );
+
     setTimeout(
       startServer,
       config.server.errorRestartIntervalInMinutes * 60 * 1000
