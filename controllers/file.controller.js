@@ -25,11 +25,14 @@ class DocumentFiles {
           statusDelete: false,
         },
       });
+
+      console.log(file);
       return res.status(errors.success.code).json(file);
     } catch (error) {
       res.sendStatus(errors.internalServerError.code);
     }
   }
+
   async getFiles(req, res) {
     try {
       const files = await DocumentFile.findAll({
@@ -43,6 +46,7 @@ class DocumentFiles {
       res.sendStatus(errors.internalServerError.code);
     }
   }
+
   async deleteFile(req, res) {
     try {
       const file = await DocumentFile.findOne({
