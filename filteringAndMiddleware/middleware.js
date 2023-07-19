@@ -76,9 +76,11 @@ middleware.setUserToRequest = async (req, res, next) => {
   }
 
   const authHeader = req.headers.authorization;
+
   if (!authHeader) {
     return res.sendStatus(errors.unauthorized.code);
   }
+
   const token = authHeader.split(" ")[1];
   try {
     const userFromService = await (
@@ -141,7 +143,11 @@ middleware.setRolesToRequest = async (req, res, next) => {
 
     const roles = userDataFromGraphQL.Workers[0].permissions;
     const office = userDataFromGraphQL.Workers[0].positions[0].office;
-    const trollUsers = [181755];
+    const adminUser = [184184];
+
+    if (adminUser.includes(req.user.id)) {
+      roles.push({ idAccessCode: "UEMI_ADMIN", idOffice: null });
+    }
     if (roles.some((role) => role.idAccessCode == "UEMI_ADMIN")) {
       roles.push({ idAccessCode: "SDM_SECRETARY_CHECK", idOffice: null });
       roles.push({ idAccessCode: "SDM_LABOR_CHECK", idOffice: null });
@@ -151,7 +157,7 @@ middleware.setRolesToRequest = async (req, res, next) => {
       });
       roles.push({ idAccessCode: "SDM_LABOR_REGISTRATION", idOffice: null });
     }
-    if (trollUsers.includes(req.user.id)) {
+    if (adminUser.includes(req.user.id)) {
       roles.push({ idAccessCode: "admin", idOffice: null });
     }
 
@@ -160,7 +166,7 @@ middleware.setRolesToRequest = async (req, res, next) => {
     req.user.officeName = office.name;
     next();
   } catch (error) {
-    return res.sendStatus(errors.badRequest.code);
+    return res.sendStatus(errors.badRequest.code).send(error.message);
   }
 };
 
@@ -186,6 +192,7 @@ middleware.setWantedPermission = (req, res, next) => {
   console.log(routerPath, path);
 
   const routerPermissions = getRouterPermissions(routerPath)[path];
+
   const permissions = {};
   permissions.roles = routerPermissions
     .filter((p) => p.role != undefined)
@@ -196,10 +203,12 @@ middleware.setWantedPermission = (req, res, next) => {
 
   permissions.field =
     permissions.field.length != 0 ? permissions.field[0] : undefined;
+
   if (permissions.roles.length == 0 && permissions.field == undefined) {
     permissions.authenticated = routerPermissions.find(
       (p) => p.authenticated != undefined
     );
+
     permissions.authenticated = permissions.authenticated
       ? permissions.authenticated.authenticated
       : false;
@@ -255,10 +264,13 @@ middleware.checkPermissions = async (req, res, next) => {
 };
 
 middleware.ownerOrHasPermissions = (req, object) => {
+  if (req.roles.some((item) => item.idAccessCode === "admin")) return true;
+
   if (req.permissions.authenticated) {
     if (!req.permissions.roleWanted && !req.permissions.fieldWanted) {
       return true;
     }
+
     if (req.permissions.roleWanted && req.permissions.rolePassed) {
       if (req.permissions.fieldWanted || req.permissions.officeCheckWanted) {
         const [field, userField] = Object.entries(req.permissions.field)[0];
@@ -276,6 +288,7 @@ middleware.ownerOrHasPermissions = (req, object) => {
       }
       return true;
     }
+
     if (req.permissions.fieldWanted) {
       const [field, userField] = Object.entries(req.permissions.field)[0];
       if (
@@ -288,6 +301,7 @@ middleware.ownerOrHasPermissions = (req, object) => {
         return true;
       }
     }
+
     return false;
   } else {
     return true;

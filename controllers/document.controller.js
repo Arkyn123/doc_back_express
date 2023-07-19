@@ -196,6 +196,7 @@ class DocumentController {
       if (!type) {
         return res.sendStatus(errors.notFound.code);
       }
+
       const document = await Document.create({
         body: req.body.body,
         documentType: type.dataValues.id,
@@ -211,10 +212,12 @@ class DocumentController {
         users: req.body.users,
         usernames: req.body.users.map((u) => u.fullname).join(),
         officeName: req.body.officeName,
+        officeId: req.user.officeId,
       });
+
       return res.status(errors.success.code).json(document.dataValues);
     } catch (e) {
-      console.log(e);
+      console.log(e.message);
       if (e instanceof ValidationError) {
         return res.sendStatus(errors.badRequest.code);
       }
@@ -289,9 +292,11 @@ class DocumentController {
       const document = await Document.findByPk(req.params.documentId, {
         include: [{ all: true, nested: true, duplicating: true }],
       });
+
       if (!document) {
         return res.sendStatus(errors.notFound.code);
       }
+
       const route = await DocumentRoute.findOne({
         where: {
           orderId: document.dataValues.order,
@@ -299,11 +304,16 @@ class DocumentController {
         },
         include: [{ all: true, nested: true, duplicating: true }],
       });
+
       if (!route) {
         return res.sendStatus(errors.forbidden.code);
       }
+
       if (!ownerOrHasPermissions(req, document))
-        return res.status(errors.forbidden.code).json({ message: "Нет прав" });
+        return res
+          .status(errors.forbidden.code)
+          .json({ message: "Нет прав " });
+
       if (
         req.roles
           .map((r) => r.idAccessCode)
@@ -317,7 +327,7 @@ class DocumentController {
           }
           if (document.dataValues.order < 4) {
             const orderNext = document.dataValues.order + 1;
-            var routeNext = await DocumentRoute.findOne({
+            let routeNext = await DocumentRoute.findOne({
               where: {
                 orderId: orderNext,
                 documentType: document.dataValues.documentType,
@@ -344,7 +354,7 @@ class DocumentController {
           var routeNext = await DocumentRoute.findOne({
             where: {
               orderId: 1,
-              documentType: document.dataValues.documentType,
+              documentType: document.documentType,
             },
           });
           if (!route) {
@@ -364,10 +374,11 @@ class DocumentController {
         const documentNew = await Document.findByPk(req.params.documentId, {
           include: [{ all: true, nested: true, duplicating: true }],
         });
+
         await DocumentOrderLog.create({
           documentId: documentNew.dataValues.id,
           order: documentNew.dataValues.order,
-          orderDescription: routeNext.dataValues.description,
+          orderDescription: routeNext.description,
           statusDescription:
             documentNew.dataValues.status.dataValues.description,
           personalNumber: req.user.id,
@@ -464,11 +475,14 @@ class DocumentController {
       const document = await Document.findByPk(req.params.documentId, {
         include: [{ all: true, nested: true, duplicating: true }],
       });
+
       if (!document) {
         return res.sendStatus(errors.notFound.code);
       }
+
       if (!ownerOrHasPermissions(req, document))
-        return res.sendStatus(errors.forbidden.code);
+        return res.status(errors.forbidden.code).json({ message: "Нет прав" });
+
       await document.update({
         dateApplication: req.body.dateApplication,
         body: req.body.updatedDocument,
@@ -476,6 +490,7 @@ class DocumentController {
         officeName: req.body.officeName,
         officeId: req.body.officeId,
       });
+      // return res.status(errors.success.code).json(document);
       return next();
     } catch (e) {
       console.log(e);
@@ -491,8 +506,10 @@ class DocumentController {
       if (!document) {
         return res.sendStatus(errors.notFound.code);
       }
+
       if (!ownerOrHasPermissions(req, document))
         return res.sendStatus(errors.forbidden.code);
+
       await document.update({
         dateApplication: req.body.dateApplication,
         deletedDate: Date.now(),
