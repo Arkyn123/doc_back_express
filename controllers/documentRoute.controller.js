@@ -26,13 +26,14 @@ class DocumentRouteController {
 
       const documentRoutes = await DocumentRoute.findAll({
         where: {
-          documentTypeId: req.params.documentTypeId,
+          documentType: req.params.documentTypeId,
         },
         include: [{ all: true, nested: true, duplicating: true }],
       });
 
       return res.status(errors.success.code).json(documentRoutes);
     } catch (e) {
+      console.warn(e.message);
       return res.sendStatus(errors.internalServerError.code);
     }
   }

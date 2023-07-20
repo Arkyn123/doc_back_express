@@ -25,6 +25,7 @@ class DicOfficeController {
       return res.sendStatus(errors.internalServerError.code);
     }
   }
+
   async addInDictionary(req, res) {
     try {
       const dic_office = await DIC_OFFICE.create({
@@ -37,6 +38,7 @@ class DicOfficeController {
       return res.sendStatus(errors.internalServerError.code);
     }
   }
+
   async saveInDictionary(req, res) {
     try {
       const dic_office = await DIC_OFFICE.findByPk(req.params.id);

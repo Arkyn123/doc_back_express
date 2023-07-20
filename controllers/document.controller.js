@@ -490,7 +490,7 @@ class DocumentController {
         officeName: req.body.officeName,
         officeId: req.body.officeId,
       });
-      // return res.status(errors.success.code).json(document);
+      return res.status(errors.success.code).json(document);
       return next();
     } catch (e) {
       console.log(e);
