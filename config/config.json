@@ -16,7 +16,12 @@
       "host": "10.11.62.70",
       "dialect": "mssql",
       "port": 1433,
-      "logging": false
+      "logging": false,
+      "dialectOptions": {
+        "options": {
+          "encrypt": false
+        }
+      }
     },
     "server": {
       "protocol": "http",

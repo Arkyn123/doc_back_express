@@ -10,14 +10,30 @@ let sequelize;
 if (config.databaseMSSQL.use_env_variable) {
   sequelize = new Sequelize(
     process.env[config.databaseMSSQL.use_env_variable],
-    config.databaseMSSQL
+    {
+      dialect: 'mssql',
+      dialectOptions: {
+        options: {
+          encrypt: false,
+        },
+      },
+    }
   );
 } else {
   sequelize = new Sequelize(
     config.databaseMSSQL.database,
     config.databaseMSSQL.username,
     config.databaseMSSQL.password,
-    config.databaseMSSQL
+    {
+      host: config.databaseMSSQL.host,
+      port: config.databaseMSSQL.port,
+      dialect: 'mssql',
+      dialectOptions: {
+        options: {
+          encrypt: false,
+        },
+      },
+    }
   );
 }
 
