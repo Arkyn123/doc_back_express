@@ -310,9 +310,7 @@ class DocumentController {
       }
 
       if (!ownerOrHasPermissions(req, document))
-        return res
-          .status(errors.forbidden.code)
-          .json({ message: "Нет прав " });
+        return res.status(errors.forbidden.code).json({ message: "Нет прав " });
 
       if (
         req.roles
